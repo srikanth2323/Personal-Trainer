@@ -1,6 +1,6 @@
 {
-  "name": "PHA Circuit Tracker",
-  "short_name": "PHA Circuit",
+  "name": "Training Tracker",
+  "short_name": "Training",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#000000",
