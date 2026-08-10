@@ -17,7 +17,10 @@ No build tools required on your end — this is a pre-built, self-contained app 
 - **History** — every session is saved locally on your device (sessions this week, total sessions, per-exercise load history)
 - **Home screen** — three sections: Workout, Walking, and Medical
 - **Screenshot scanning (OCR)** — upload a Samsung Health screenshot and it attempts to auto-detect duration, calories, heart rate, steps, and VO2max. Every detected value is shown in an editable form for you to check and correct before saving — nothing saves automatically
-- **Medical section** — log vitals, test results, medications, appointments, symptoms and notes, with trends over time for any numeric value
+- **Medical section** — log vitals, test results, medications, appointments, symptoms and notes
+- **Lab report scanning** — photograph or paste a lab report and it extracts recognised markers (hemoglobin, RBC, WBC, platelets, HbA1c, lipids, creatinine, tumour markers and more), each shown for review and correction before saving. Markers you haven't tracked before are flagged as new
+- **Charted trends everywhere** — workout heart rate, session duration, total load and per-exercise weight progression; walking VO2max, heart rate and steps-per-minute; and any medical marker with two or more readings
+- **Delete** — remove any workout session, walk, or medical entry, with a confirmation step
 - **Samsung Health import** — after a session (or anytime for a walk), enter the key numbers from your Samsung Health screenshot (duration, calories, avg/max heart rate, steps, VO2max) to attach real physiological data to your training log
 - **Session RPE** — rate how hard each session felt (1-10) right after finishing
 - **Body log** — track bodyweight and resting heart rate over time
