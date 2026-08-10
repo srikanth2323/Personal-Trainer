@@ -15,12 +15,17 @@ No build tools required on your end — this is a pre-built, self-contained app 
 - **Form guidance** — step-by-step cues for every exercise, plus a link to search YouTube for a demonstration
 - **Muscle diagrams** — simple front/back body silhouettes highlighting what each exercise targets
 - **History** — every session is saved locally on your device (sessions this week, total sessions, per-exercise load history)
-- **Home screen** — three sections: Workout, Walking, and Medical
+- **Home screen** — four sections: Workout, Walking, Medical, and Day Planner
+- **Hardware back button** — the Android back button steps back through the app (detail → list → home) instead of closing it
 - **Screenshot scanning (OCR)** — upload a Samsung Health screenshot and it attempts to auto-detect duration, calories, heart rate, steps, and VO2max. Every detected value is shown in an editable form for you to check and correct before saving — nothing saves automatically
 - **Medical section** — log vitals, test results, medications, appointments, symptoms and notes
 - **Lab report import (PDF or image)** — upload a PDF or photo of a lab report, or paste its text. Text-based PDFs are read directly from the embedded text layer (accurate, no OCR); scanned PDFs and photos fall back to OCR page by page. Recognised markers (hemoglobin, RBC, WBC, platelets, HbA1c, lipids, creatinine, tumour markers and more) plus the report date are extracted, and every value is shown for review and correction before saving. Markers you haven't tracked before are flagged as new
 - **Charted trends everywhere** — workout heart rate, session duration, total load and per-exercise weight progression; walking VO2max, heart rate and steps-per-minute; and any medical marker with two or more readings. All charts are labelled with month and year
 - **Manage medical parameters** — choose which markers appear in your trends, hide ones you don't want charted (readings are kept), or remove a marker and all its readings entirely
+- **Medical records grouped by date** — the log lists one card per test date with every value from that report bundled together, so a lab report reads as a single record rather than scattered rows
+- **Add missed parameters** — after a scan you can add any value the scanner didn't pick up, with an editable name, value and unit, before saving
+- **Day Planner** — tasks grouped by target date (overdue first, then today, tomorrow, this week, this month, later), with details, optional time and duration, location, a contact from your phone's contact picker, and repeat rules (daily/weekly/monthly/yearly, every *n* units). Tasks with a time become proper timed calendar events; without one they're all-day. Guests can be invited by email — Google Calendar sends them the invite and blocks their calendar once accepted. Exports to Google Calendar or .ics with reminders the day before and on the day, plus one-tap WhatsApp and email to guests
+- **Trend detail everywhere** — tap any workout or walking trend for the same dedicated chart-and-history view as medical markers
 - **Medical detail view** — tap any marker for a dedicated page with a full gridded chart plotted against real elapsed time, first/average/lowest/highest stats, total change since the first reading, and the complete reading history with change-since-last on each
 - **Delete** — remove any workout session, walk, or medical entry, with a confirmation step
 - **Samsung Health import** — after a session (or anytime for a walk), enter the key numbers from your Samsung Health screenshot (duration, calories, avg/max heart rate, steps, VO2max) to attach real physiological data to your training log
