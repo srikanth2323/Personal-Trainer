@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<meta name="theme-color" content="#000000" />
+<title>PHA Circuit Tracker</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icon-192.png" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');
+  * { box-sizing: border-box; }
+  body { margin: 0; background-color: #000000; }
+  .animate-spin { animation: spin 1s linear infinite; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body style="background-color:#000000;">
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef } = React;
+
+// ---- localStorage-backed shim matching the window.storage API used by this app ----
+window.storage = {
+  get: async (key) => {
+    const v = localStorage.getItem(key);
+    if (v === null) throw new Error('not found');
+    return { key, value: v };
+  },
+  set: async (key, value) => {
+    localStorage.setItem(key, value);
+    return { key, value };
+  },
+  delete: async (key) => {
+    localStorage.removeItem(key);
+    return { key, deleted: true };
+  },
+  list: async (prefix) => {
+    const keys = Object.keys(localStorage).filter(k => !prefix || k.startsWith(prefix));
+    return { keys };
+  },
+};
+
+// ---- minimal inline icon set replacing lucide-react (no bundler needed) ----
+function Ico({ size = 16, color = 'currentColor', className = '', strokeWidth = 2, fill = 'none', children }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={color}
+      strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      {children}
+    </svg>
+  );
+}
+const Dumbbell = (p) => <Ico {...p}><path d="M6.5 6.5 17.5 17.5M4 4l3 3M20 20l-3-3M2 8l3-3M22 16l-3 3M8 2l3 3M16 22l-3-3" /></Ico>;
+const Check = (p) => <Ico {...p}><polyline points="20 6 9 17 4 12" /></Ico>;
+const ChevronRight = (p) => <Ico {...p}><polyline points="9 18 15 12 9 6" /></Ico>;
+const ChevronLeft = (p) => <Ico {...p}><polyline points="15 18 9 12 15 6" /></Ico>;
+const RotateCcw = (p) => <Ico {...p}><path d="M3 12a9 9 0 1 0 3-6.7" /><polyline points="3 3 3 9 9 9" /></Ico>;
+const Info = (p) => <Ico {...p}><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></Ico>;
+const X = (p) => <Ico {...p}><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></Ico>;
+const SkipForward = (p) => <Ico {...p}><polygon points="5 4 15 12 5 20" /><line x1="19" y1="5" x2="19" y2="19" /></Ico>;
+const Flame = (p) => <Ico {...p}><path d="M12 2c1 4-4 5-4 10a4 4 0 0 0 8 0c0-2-1-3-1-3s1 3 3 3a4 4 0 0 0 0-8c0 0-1 2-2 1 1-2 0-4-4-3z" /></Ico>;
+const Calendar = (p) => <Ico {...p}><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></Ico>;
+const TrendingUp = (p) => <Ico {...p}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></Ico>;
+const Play = (p) => <Ico {...p}><polygon points="6 3 20 12 6 21 6 3" /></Ico>;
+const Loader2 = (p) => <Ico {...p}><path d="M21 12a9 9 0 1 1-6.2-8.5" /></Ico>;
+const ChevronDown = (p) => <Ico {...p}><polyline points="6 9 12 15 18 9" /></Ico>;
+const ChevronUp = (p) => <Ico {...p}><polyline points="18 15 12 9 6 15" /></Ico>;
+const Trophy = (p) => <Ico {...p}><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4z" /><path d="M7 5H4a2 2 0 0 0 2 4M17 5h3a2 2 0 0 1-2 4" /></Ico>;
+const ClipboardList = (p) => <Ico {...p}><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M9 3h6v3H9z" /><line x1="8" y1="11" x2="16" y2="11" /><line x1="8" y1="15" x2="16" y2="15" /></Ico>;
+const Activity = (p) => <Ico {...p}><polyline points="2 12 7 12 9 5 14 19 16 12 22 12" /></Ico>;
+const Minus = (p) => <Ico {...p}><line x1="5" y1="12" x2="19" y2="12" /></Ico>;
+const Plus = (p) => <Ico {...p}><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></Ico>;
+const Youtube = (p) => <Ico {...p}><rect x="2" y="5" width="20" height="14" rx="4" /><polygon points="10 9 15 12 10 15" fill={p.color || 'currentColor'} /></Ico>;
+
+const COLORS = {
+  bg: '#000000',
+  surface: '#1C1E25',
+  surface2: '#262932',
+  border: '#31343E',
+  text: '#F2F1ED',
+  textMute: '#8E94A1',
+  grayWhite: '#D6D8DC',
+  upper: '#FF6A3D',
+  lower: '#4C8DFF',
+  success: '#3DDC97',
+  warn: '#FFB03D',
+};
+
+const FONTS = {
+  display: "'Oswald', 'Arial Narrow', sans-serif",
+  body: "'Inter', system-ui, sans-serif",
+  mono: "'JetBrains Mono', 'Courier New', monospace",
+};
+
+const WORKOUTS = {
+  A: [
+    { name: 'Barbell Back Squat', equip: 'Straight bar + plates', region: 'Lower', muscle: 'Quads / Glutes', reps: '12–15', targets: ['quads', 'glutes'],
+      cues: ['Bar rests on upper traps, feet shoulder-width, toes slightly out', 'Brace core, break at hips and knees together, chest up', 'Descend until thighs at least parallel, knees track over toes', 'Drive through mid-foot to stand, avoid letting knees cave in'] },
+    { name: 'Flat DB Bench Press', equip: 'Dumbbells + bench', region: 'Upper', muscle: 'Chest / Triceps', reps: '12–15', targets: ['chest', 'triceps'],
+      cues: ['Lie on bench, feet flat on floor, natural arch in lower back', 'Dumbbells start at chest level, elbows ~45° from torso', 'Press up and slightly in until arms extend, avoid locking out hard', 'Lower under control back to chest level'] },
+    { name: 'Barbell Romanian Deadlift', equip: 'Straight bar + plates', region: 'Lower', muscle: 'Hamstrings / Glutes', reps: '12–15', targets: ['hamstrings', 'glutes'],
+      cues: ['Stand tall, bar close to thighs, soft knee bend', 'Hinge at hips, push hips back, bar slides down thighs', 'Lower until you feel a hamstring stretch, keep back flat', 'Drive hips forward to stand, squeeze glutes at top'] },
+    { name: 'Bent-Over Barbell Row', equip: 'Straight bar + plates', region: 'Upper', muscle: 'Back / Biceps', reps: '12–15', targets: ['back', 'biceps'],
+      cues: ['Hinge forward ~45°, knees soft, back flat, core braced', 'Let bar hang at arm\u2019s length, grip just outside hips', 'Pull bar to lower ribs, elbows drive back', 'Lower under control, avoid jerking with the lower back'] },
+    { name: 'Bulgarian Split Squat', equip: 'Dumbbells + bench', region: 'Lower', muscle: 'Quad / Glute (unilateral)', reps: '10–12/side', targets: ['quads', 'glutes'],
+      cues: ['Rear foot up on bench, front foot far enough forward', 'Torso upright, dumbbells at sides', 'Lower straight down until front thigh nears parallel', 'Push through front heel, keep knee tracking over toes'] },
+    { name: 'Standing Barbell Overhead Press', equip: 'Straight bar + plates', region: 'Upper', muscle: 'Shoulders / Triceps', reps: '12–15', targets: ['shoulders', 'triceps'],
+      cues: ['Feet hip-width, bar at collarbone, grip just outside shoulders', 'Brace core and glutes, avoid leaning back excessively', 'Press bar straight up, head moves back then through at top', 'Lower under control back to collarbone'] },
+    { name: 'Standing Calf Raise', equip: 'Dumbbells (or bar on back)', region: 'Lower', muscle: 'Calves', reps: '15–20', targets: ['calves'],
+      cues: ['Stand tall, weight at sides or on back, feet hip-width', 'Rise onto toes as high as possible, pause briefly', 'Lower slowly past the start position for a full stretch', 'Keep knees soft, not locked out'] },
+    { name: 'EZ Bar Bicep Curl', equip: 'EZ bar + plates', region: 'Upper', muscle: 'Biceps', reps: '12–15', targets: ['biceps'],
+      cues: ['Grip the angled inner grips, elbows tucked to sides', 'Curl up without swinging the torso or flaring elbows forward', 'Squeeze at the top, lower under control to full extension', 'Keep wrists neutral, following the bar\u2019s angle'] },
+    { name: 'Push-Ups (feet elevated on bench)', equip: 'Bodyweight + bench', region: 'Upper', muscle: 'Chest / Triceps', reps: 'To near-failure', targets: ['chest', 'triceps'],
+      cues: ['Hands slightly wider than shoulders, body in a straight line', 'Feet on bench for added load, core and glutes braced', 'Lower chest toward the floor, elbows ~45° from torso', 'Press back up without letting hips sag or pike'] },
+    { name: 'DB Lateral Raise', equip: 'Dumbbells', region: 'Upper', muscle: 'Side Delts', reps: '12–15', targets: ['shoulders'],
+      cues: ['Stand tall, dumbbells at sides, slight bend in the elbows', 'Raise arms out to the sides to roughly shoulder height, leading with elbows', 'Avoid shrugging shoulders up toward your ears as you lift', 'Lower slowly under control back to your sides'] },
+  ],
+  B: [
+    { name: 'Barbell Deadlift', equip: 'Straight bar + plates', region: 'Lower', muscle: 'Posterior chain / Back', reps: '10–12', targets: ['hamstrings', 'glutes', 'back'],
+      cues: ['Bar over mid-foot, shins close, grip just outside legs', 'Flat back, chest up, hips low enough to load the legs', 'Drive through the floor, bar stays close to shins/thighs', 'Stand tall with hips through, avoid hyperextending at top'] },
+    { name: 'Pike Push-Up', equip: 'Bodyweight (+ bench for progression)', region: 'Upper', muscle: 'Upper chest / Shoulders', reps: 'To near-failure', targets: ['chest', 'shoulders'],
+      cues: ['Start in a downward-dog position, hands shoulder-width, hips high', 'Bend elbows to lower the top of your head toward the floor', 'Keep hips high — a steeper hip angle shifts work to the shoulders', 'Press back up; elevate feet on the bench later to progress'] },
+    { name: 'Front-Foot-Elevated Split Squat', equip: 'Straight bar + small plate', region: 'Lower', muscle: 'Quads / Glutes', reps: '10–12/side', targets: ['quads', 'glutes'],
+      cues: ['Front foot slightly elevated (or standard lunge stance), bar on back', 'Lower straight down, back knee toward the floor', 'Front knee tracks over toes, torso stays upright', 'Push through the front heel to return to start'] },
+    { name: 'Single-Arm DB Row', equip: 'Dumbbell + bench', region: 'Upper', muscle: 'Back / Lats', reps: '12–15/side', targets: ['back', 'biceps'],
+      cues: ['One knee and hand on bench, flat back, other foot on floor', 'Dumbbell hangs straight down, pull to hip, elbow drives back', 'Squeeze at the top, lower under full control', 'Avoid rotating the torso to cheat the weight up'] },
+    { name: 'Barbell Hip Thrust', equip: 'Straight bar + plates + bench', region: 'Lower', muscle: 'Glutes / Hamstrings', reps: '12–15', targets: ['glutes', 'hamstrings'],
+      cues: ['Upper back on bench, bar across hips (pad for comfort), feet flat', 'Drive through heels, hips up until torso lines up with thighs', 'Squeeze glutes hard at the top, avoid over-arching the back', 'Lower under control, don\u2019t let hips fully drop between reps'] },
+    { name: 'DB Standing Shoulder Press', equip: 'Dumbbells', region: 'Upper', muscle: 'Shoulders (front/side)', reps: '10–12', targets: ['shoulders'],
+      cues: ['Stand tall, dumbbells at shoulder height, palms facing forward', 'Brace core, avoid leaning back excessively as you press', 'Press dumbbells straight overhead until arms extend', 'Lower under control back to shoulder height'] },
+    { name: 'Barbell Good Morning (light load)', equip: 'Straight bar + light plates', region: 'Lower', muscle: 'Hamstrings / Lower back', reps: '12–15', targets: ['hamstrings', 'lowerBack'],
+      cues: ['Bar on upper back like a squat, feet hip-width, soft knees', 'Hinge at the hips, pushing them back, flat back throughout', 'Lower torso until you feel a hamstring stretch', 'Drive hips forward to return upright — keep this one light'] },
+    { name: 'Bent-Over Wide-Grip DB Row', equip: 'Dumbbells', region: 'Upper', muscle: 'Rear delts / Upper back', reps: '12–15', targets: ['rearDelts', 'back'],
+      cues: ['Hinge forward ~45°, flat back, dumbbells hanging below shoulders', 'Pull elbows out wide and up toward shoulder height, like drawing a bow', 'Squeeze shoulder blades together at the top', 'Lower under control, avoid using momentum'] },
+    { name: 'Bench Dips', equip: 'Bodyweight + bench', region: 'Upper', muscle: 'Triceps / Chest', reps: 'To near-failure', targets: ['triceps', 'chest'],
+      cues: ['Hands on bench edge, fingers forward, feet out on the floor', 'Lower body by bending elbows to ~90°, elbows point back', 'Keep hips close to the bench, shoulders shouldn\u2019t roll forward', 'Press through the palms to return to start'] },
+    { name: 'Bent-Over DB Reverse Fly', equip: 'Dumbbells', region: 'Upper', muscle: 'Rear delts / Upper back', reps: '12–15', targets: ['rearDelts', 'back'],
+      cues: ['Hinge forward ~45°, flat back, dumbbells hanging below shoulders', 'Slight bend in elbows, raise arms out to the sides in a wide arc', 'Squeeze shoulder blades together at the top', 'Lower under control, avoid using momentum'] },
+  ],
+};
+
+const FINISHERS = {
+  A: { label: 'Core Finisher', items: [
+      { name: 'Plank', target: '3 x 30–45 sec', targets: ['abs'], cues: ['Forearms on floor, elbows under shoulders, straight line head-to-heel', 'Brace core and glutes, don\u2019t let hips sag or pike', 'Breathe steadily, hold position'] },
+      { name: 'Bodyweight Leg Raises', target: '2 x 15', targets: ['abs'], cues: ['Lie flat, hands under lower back or at sides', 'Legs straight, lift to ~90°, lower slowly without touching floor', 'Keep lower back pressed toward the floor throughout'] },
+    ]},
+  B: { label: 'Core Finisher', items: [
+      { name: 'Side Plank', target: '3 x 20–30 sec/side', targets: ['obliques'], cues: ['Forearm on floor under shoulder, straight line, feet stacked', 'Lift hips, no sagging, hold and breathe steadily'] },
+      { name: 'DB Russian Twists', target: '2 x 15/side', targets: ['obliques'], cues: ['Sit with knees bent, lean back slightly, feet on floor or lifted', 'Rotate torso side to side, tapping near the floor', 'Keep chest up, move from the core not just the arms'] },
+      { name: 'Superman', target: '2 x 15', targets: ['lowerBack'], cues: ['Lie face down, arms extended forward', 'Lift chest, arms and legs off the floor together', 'Hold briefly, squeeze lower back and glutes, lower with control'] },
+    ]},
+};
+
+function pad2(n) { return n.toString().padStart(2, '0'); }
+function fmtTime(s) { return `${pad2(Math.floor(s / 60))}:${pad2(s % 60)}`; }
+function fmtDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function isWithinDays(iso, days) {
+  return (Date.now() - new Date(iso).getTime()) <= days * 86400000;
+}
+function ytSearchUrl(name) {
+  return `https://www.youtube.com/results?search_query=${encodeURIComponent(name + ' correct form tutorial')}`;
+}
+const WEIGHT_OPTIONS = ['Bodyweight', ...Array.from({ length: 41 }, (_, i) => i * 2.5)];
+function formatWeight(w) {
+  if (w === undefined || w === null || w === '') return '—';
+  return w === 'Bodyweight' ? 'Bodyweight' : `${w} kg`;
+}
+function isBodyweightExercise(ex) {
+  return ex.reps === 'To near-failure';
+}
+
+function RegionTag({ region }) {
+  const color = region === 'Upper' ? COLORS.upper : COLORS.lower;
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
+      style={{ backgroundColor: color + '20', color, fontFamily: FONTS.mono, letterSpacing: '0.03em' }}>
+      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />
+      {region === 'Upper' ? 'UPPER' : 'LOWER'}
+    </span>
+  );
+}
+
+// Simplified anatomical points on a 100x220 mannequin viewBox, split front/back
+const MUSCLE_POINTS = {
+  chest:      { view: 'front', label: 'Chest',     points: [{ cx: 50, cy: 55, rx: 15, ry: 9 }] },
+  shoulders:  { view: 'front', label: 'Shoulders',  points: [{ cx: 21, cy: 44, rx: 7, ry: 9 }, { cx: 79, cy: 44, rx: 7, ry: 9 }] },
+  biceps:     { view: 'front', label: 'Biceps',     points: [{ cx: 18, cy: 63, rx: 6, ry: 11 }, { cx: 82, cy: 63, rx: 6, ry: 11 }] },
+  abs:        { view: 'front', label: 'Abs',        points: [{ cx: 50, cy: 76, rx: 10, ry: 13 }] },
+  obliques:   { view: 'front', label: 'Obliques',   points: [{ cx: 37, cy: 78, rx: 5, ry: 11 }, { cx: 63, cy: 78, rx: 5, ry: 11 }] },
+  quads:      { view: 'front', label: 'Quads',      points: [{ cx: 40, cy: 128, rx: 8, ry: 22 }, { cx: 60, cy: 128, rx: 8, ry: 22 }] },
+  traps:      { view: 'back',  label: 'Traps',      points: [{ cx: 50, cy: 42, rx: 12, ry: 8 }] },
+  rearDelts:  { view: 'back',  label: 'Rear delts', points: [{ cx: 21, cy: 44, rx: 7, ry: 9 }, { cx: 79, cy: 44, rx: 7, ry: 9 }] },
+  back:       { view: 'back',  label: 'Back / Lats', points: [{ cx: 50, cy: 64, rx: 16, ry: 15 }] },
+  triceps:    { view: 'back',  label: 'Triceps',    points: [{ cx: 18, cy: 63, rx: 6, ry: 11 }, { cx: 82, cy: 63, rx: 6, ry: 11 }] },
+  lowerBack:  { view: 'back',  label: 'Lower back', points: [{ cx: 50, cy: 90, rx: 10, ry: 8 }] },
+  glutes:     { view: 'back',  label: 'Glutes',     points: [{ cx: 50, cy: 105, rx: 14, ry: 10 }] },
+  hamstrings: { view: 'back',  label: 'Hamstrings', points: [{ cx: 40, cy: 132, rx: 8, ry: 20 }, { cx: 60, cy: 132, rx: 8, ry: 20 }] },
+  calves:     { view: 'back',  label: 'Calves',     points: [{ cx: 40, cy: 178, rx: 6, ry: 15 }, { cx: 60, cy: 178, rx: 6, ry: 15 }] },
+};
+
+function MannequinSVG({ view, highlightKeys }) {
+  const active = highlightKeys.filter(k => MUSCLE_POINTS[k] && MUSCLE_POINTS[k].view === view);
+  return (
+    <svg viewBox="0 0 100 220" width="100%" height="100%">
+      {/* base silhouette */}
+      <circle cx="50" cy="20" r="13" fill={COLORS.surface2} />
+      <rect x="31" y="35" width="38" height="70" rx="15" fill={COLORS.surface2} />
+      <rect x="14" y="40" width="13" height="62" rx="6.5" fill={COLORS.surface2} />
+      <rect x="73" y="40" width="13" height="62" rx="6.5" fill={COLORS.surface2} />
+      <rect x="33" y="103" width="15" height="84" rx="7.5" fill={COLORS.surface2} />
+      <rect x="52" y="103" width="15" height="84" rx="7.5" fill={COLORS.surface2} />
+      {active.map((k, i) => {
+        const m = MUSCLE_POINTS[k];
+        const color = MUSCLE_POINTS[k].view === 'front' && (k === 'quads') ? COLORS.lower
+          : (k === 'chest' || k === 'shoulders' || k === 'biceps' || k === 'abs' || k === 'obliques') ? COLORS.upper
+          : (k === 'glutes' || k === 'hamstrings' || k === 'calves') ? COLORS.lower : COLORS.upper;
+        return m.points.map((p, j) => (
+          <ellipse key={`${i}-${j}`} cx={p.cx} cy={p.cy} rx={p.rx} ry={p.ry} fill={color} fillOpacity="0.55" stroke={color} strokeWidth="1" />
+        ));
+      })}
+    </svg>
+  );
+}
+
+function MuscleDiagram({ targets }) {
+  if (!targets || targets.length === 0) return null;
+  const views = Array.from(new Set(targets.map(k => MUSCLE_POINTS[k] && MUSCLE_POINTS[k].view).filter(Boolean)));
+  const labels = targets.map(k => MUSCLE_POINTS[k] && MUSCLE_POINTS[k].label).filter(Boolean);
+  return (
+    <div className="flex items-center gap-3 mt-3 mb-1">
+      {views.map(v => (
+        <div key={v} className="flex flex-col items-center" style={{ width: 64 }}>
+          <div style={{ width: 56, height: 122 }}>
+            <MannequinSVG view={v} highlightKeys={targets} />
+          </div>
+          <div className="text-[9px] uppercase tracking-widest mt-0.5" style={{ color: COLORS.textMute }}>{v}</div>
+        </div>
+      ))}
+      <div className="flex flex-wrap gap-1.5">
+        {labels.map((l, i) => (
+          <span key={i} className="text-[10px] rounded-full px-2 py-0.5" style={{ backgroundColor: COLORS.surface2, color: COLORS.textMute }}>{l}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StationTrack({ stations, day, currentRound, status }) {
+  return (
+    <div className="flex items-center gap-1.5 w-full">
+      {stations.map((ex, i) => {
+        const key = `${currentRound}-${i}`;
+        const st = status[key];
+        const color = ex.region === 'Upper' ? COLORS.upper : COLORS.lower;
+        return (
+          <div key={i} className="flex-1 h-2 rounded-full" style={{
+            backgroundColor: st === 'done' ? color : st === 'skipped' ? COLORS.border : COLORS.surface2,
+            border: st === 'skipped' ? `1px solid ${COLORS.textMute}` : 'none',
+          }} title={ex.name} />
+        );
+      })}
+    </div>
+  );
+}
+
+function PHATracker() {
+  const [loading, setLoading] = useState(true);
+  const [view, setView] = useState('workout');
+  const [day, setDay] = useState('A');
+  const [roundsTarget, setRoundsTarget] = useState(3);
+  const [phase, setPhase] = useState('setup'); // setup | active | rest | finisher | done
+  const [currentRound, setCurrentRound] = useState(1);
+  const [stationIdx, setStationIdx] = useState(0);
+  const [status, setStatus] = useState({});
+  const [weights, setWeights] = useState({});
+  const [weightInput, setWeightInput] = useState('');
+  const [pendingAdvance, setPendingAdvance] = useState(null);
+  const [restSeconds, setRestSeconds] = useState(0);
+  const [showInfo, setShowInfo] = useState(false);
+  const [finisherIdx, setFinisherIdx] = useState(0);
+  const [finisherStatus, setFinisherStatus] = useState({});
+  const [sessions, setSessions] = useState([]);
+  const [startTime, setStartTime] = useState(null);
+  const [expandedSession, setExpandedSession] = useState(null);
+  const [saveError, setSaveError] = useState(false);
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    (async () => {
+      let loadedSessions = [];
+      let loadedSettings = null;
+      try {
+        const r = await window.storage.get('pha-sessions', false);
+        if (r && r.value) loadedSessions = JSON.parse(r.value);
+      } catch (e) { /* no sessions yet */ }
+      try {
+        const r = await window.storage.get('pha-settings', false);
+        if (r && r.value) loadedSettings = JSON.parse(r.value);
+      } catch (e) { /* no settings yet */ }
+      setSessions(Array.isArray(loadedSessions) ? loadedSessions : []);
+      if (loadedSettings) {
+        if (loadedSettings.day) setDay(loadedSettings.day);
+        if (loadedSettings.rounds) setRoundsTarget(loadedSettings.rounds);
+      }
+      setLoading(false);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (loading) return;
+    window.storage.set('pha-settings', JSON.stringify({ day, rounds: roundsTarget }), false).catch(() => {});
+  }, [day, roundsTarget, loading]);
+
+  const stations = WORKOUTS[day];
+
+  function lastWeightFor(name) {
+    for (const s of sessions) {
+      const found = s.exercises && s.exercises.find(e => e.name === name);
+      if (found && found.weight) return found.weight;
+    }
+    return '';
+  }
+
+  useEffect(() => {
+    if (phase !== 'active') return;
+    const ex = stations[stationIdx];
+    const prior = weights[ex.name] ?? lastWeightFor(ex.name);
+    if (prior !== undefined && prior !== '') {
+      setWeightInput(prior);
+    } else if (isBodyweightExercise(ex)) {
+      setWeightInput('Bodyweight');
+    } else {
+      setWeightInput('');
+    }
+  }, [stationIdx, day, phase]);
+
+  useEffect(() => {
+    if (phase !== 'rest') return;
+    if (restSeconds <= 0) {
+      advanceAfterRest();
+      return;
+    }
+    timerRef.current = setTimeout(() => setRestSeconds(s => s - 1), 1000);
+    return () => clearTimeout(timerRef.current);
+  }, [phase, restSeconds]);
+
+  function startSession() {
+    setStatus({});
+    setWeights({});
+    setCurrentRound(1);
+    setStationIdx(0);
+    setFinisherIdx(0);
+    setFinisherStatus({});
+    setStartTime(Date.now());
+    setPhase('active');
+  }
+
+  function advance(result) {
+    const ex = stations[stationIdx];
+    const updatedWeights = { ...weights };
+    if (result === 'done' && weightInput !== '') updatedWeights[ex.name] = weightInput;
+    setWeights(updatedWeights);
+    const key = `${currentRound}-${stationIdx}`;
+    setStatus(s => ({ ...s, [key]: result }));
+
+    const isLastStation = stationIdx === stations.length - 1;
+    const isLastRound = currentRound === roundsTarget;
+
+    if (isLastStation && isLastRound) {
+      setPhase('finisher');
+      setFinisherIdx(0);
+      setFinisherStatus({});
+    } else if (isLastStation) {
+      setPendingAdvance('round');
+      setPhase('rest');
+      setRestSeconds(75);
+    } else {
+      setPendingAdvance('station');
+      setPhase('rest');
+      setRestSeconds(20);
+    }
+  }
+
+  function advanceAfterRest() {
+    if (pendingAdvance === 'round') {
+      setCurrentRound(r => r + 1);
+      setStationIdx(0);
+    } else {
+      setStationIdx(i => i + 1);
+    }
+    setPendingAdvance(null);
+    setPhase('active');
+  }
+
+  function skipRest() {
+    clearTimeout(timerRef.current);
+    setRestSeconds(0);
+  }
+
+  function finishSession(finalWeights, finalFinisherStatus) {
+    const finisherItems = FINISHERS[day].items;
+    const finisherCompleted = Object.values(finalFinisherStatus || {}).filter(v => v === 'done').length;
+    const durationMin = startTime ? Math.max(1, Math.round((Date.now() - startTime) / 60000)) : null;
+    const record = {
+      id: Date.now().toString(),
+      date: new Date().toISOString(),
+      day,
+      rounds: roundsTarget,
+      durationMin,
+      exercises: stations.map(ex => ({ name: ex.name, weight: finalWeights[ex.name] || '' })),
+      finisherCompleted,
+      finisherTotal: finisherItems.length,
+    };
+    const newSessions = [record, ...sessions];
+    setSessions(newSessions);
+    setPhase('done');
+    window.storage.set('pha-sessions', JSON.stringify(newSessions), false)
+      .then(res => { if (!res) setSaveError(true); })
+      .catch(() => setSaveError(true));
+  }
+
+  function finisherAdvance(result) {
+    const items = FINISHERS[day].items;
+    const updatedFinisherStatus = { ...finisherStatus, [finisherIdx]: result };
+    setFinisherStatus(updatedFinisherStatus);
+    if (finisherIdx === items.length - 1) {
+      finishSession(weights, updatedFinisherStatus);
+    } else {
+      setFinisherIdx(i => i + 1);
+    }
+  }
+
+  function quitSession() {
+    setPhase('setup');
+    clearTimeout(timerRef.current);
+  }
+
+  function endSessionEarly() {
+    clearTimeout(timerRef.current);
+    const durationMin = startTime ? Math.max(1, Math.round((Date.now() - startTime) / 60000)) : null;
+
+    if (phase === 'finisher') {
+      const finisherItems = FINISHERS[day].items;
+      const finisherCompleted = Object.values(finisherStatus).filter(v => v === 'done').length;
+      const record = {
+        id: Date.now().toString(),
+        date: new Date().toISOString(),
+        day,
+        rounds: roundsTarget,
+        roundsTarget,
+        partial: finisherCompleted < finisherItems.length,
+        durationMin,
+        exercises: stations.map(ex => ({ name: ex.name, weight: weights[ex.name] || '' })),
+        finisherCompleted,
+        finisherTotal: finisherItems.length,
+      };
+      const newSessions = [record, ...sessions];
+      setSessions(newSessions);
+      setPhase('done');
+      window.storage.set('pha-sessions', JSON.stringify(newSessions), false)
+        .then(res => { if (!res) setSaveError(true); })
+        .catch(() => setSaveError(true));
+      return;
+    }
+
+    const reachedIdx = new Set(Object.keys(status).map(k => parseInt(k.split('-')[1], 10)));
+    if (reachedIdx.size === 0) {
+      // nothing logged yet — nothing meaningful to save
+      quitSession();
+      return;
+    }
+    const exList = stations
+      .filter((ex, i) => reachedIdx.has(i))
+      .map(ex => ({ name: ex.name, weight: weights[ex.name] || '' }));
+    const record = {
+      id: Date.now().toString(),
+      date: new Date().toISOString(),
+      day,
+      rounds: currentRound,
+      roundsTarget,
+      partial: true,
+      durationMin,
+      exercises: exList,
+      finisherCompleted: 0,
+      finisherTotal: FINISHERS[day].items.length,
+    };
+    const newSessions = [record, ...sessions];
+    setSessions(newSessions);
+    setPhase('done');
+    window.storage.set('pha-sessions', JSON.stringify(newSessions), false)
+      .then(res => { if (!res) setSaveError(true); })
+      .catch(() => setSaveError(true));
+  }
+
+  function goBack() {
+    if (phase === 'finisher') {
+      if (finisherIdx > 0) {
+        setFinisherIdx(i => i - 1);
+      } else {
+        setPhase('active');
+        setCurrentRound(roundsTarget);
+        setStationIdx(stations.length - 1);
+      }
+      return;
+    }
+    if (phase !== 'active') return;
+    if (stationIdx > 0) {
+      setStationIdx(i => i - 1);
+    } else if (currentRound > 1) {
+      setCurrentRound(r => r - 1);
+      setStationIdx(stations.length - 1);
+    }
+  }
+
+  const canGoBack = phase === 'finisher' ? true : !(currentRound === 1 && stationIdx === 0);
+
+  const totalStations = roundsTarget * stations.length + FINISHERS[day].items.length;
+  const progressedCount = Object.keys(status).length + Object.keys(finisherStatus).length;
+  const overallPct = phase === 'setup' ? 0 : Math.round((progressedCount / totalStations) * 100);
+
+  const thisWeekCount = sessions.filter(s => isWithinDays(s.date, 7)).length;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: COLORS.bg }}>
+        <Loader2 className="animate-spin" color={COLORS.upper} size={28} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen w-full" style={{ backgroundColor: COLORS.bg, color: COLORS.text, fontFamily: FONTS.body }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');`}</style>
+
+      {/* Header */}
+      <div className="px-4 pt-6 pb-3 sticky top-0 z-10" style={{ backgroundColor: COLORS.bg, borderBottom: `1px solid ${COLORS.border}` }}>
+        <div className="flex items-center justify-between max-w-lg mx-auto">
+          <div className="flex items-center gap-2.5">
+            <svg width="26" height="20" viewBox="0 0 52 20" fill="none">
+              <path d="M0 10 H14 L18 2 L24 18 L28 6 L32 14 L36 10 H52" stroke={COLORS.upper} strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <div>
+              <div className="text-lg leading-none font-semibold tracking-wide" style={{ fontFamily: FONTS.display }}>PHA CIRCUIT</div>
+              <div className="text-[10px] uppercase tracking-widest" style={{ color: COLORS.textMute }}>Peripheral Heart Action</div>
+            </div>
+          </div>
+          <div className="flex rounded-lg overflow-hidden" style={{ border: `1px solid ${COLORS.border}` }}>
+            <button onClick={() => setView('workout')} className="px-3 py-1.5 text-xs font-semibold flex items-center gap-1"
+              style={{ backgroundColor: view === 'workout' ? COLORS.surface2 : 'transparent', color: view === 'workout' ? COLORS.text : COLORS.textMute }}>
+              <Dumbbell size={13} /> Workout
+            </button>
+            <button onClick={() => setView('history')} className="px-3 py-1.5 text-xs font-semibold flex items-center gap-1"
+              style={{ backgroundColor: view === 'history' ? COLORS.surface2 : 'transparent', color: view === 'history' ? COLORS.text : COLORS.textMute }}>
+              <ClipboardList size={13} /> History
+            </button>
+          </div>
+        </div>
+        {phase !== 'setup' && view === 'workout' && (
+          <div className="max-w-lg mx-auto mt-3 h-1 rounded-full overflow-hidden" style={{ backgroundColor: COLORS.surface2 }}>
+            <div className="h-full rounded-full transition-all" style={{ width: `${overallPct}%`, backgroundColor: COLORS.success }} />
+          </div>
+        )}
+      </div>
+
+      <div className="max-w-lg mx-auto px-4 pb-10">
+        {view === 'workout' ? (
+          <>
+            {phase === 'setup' && (
+              <SetupScreen day={day} setDay={setDay} roundsTarget={roundsTarget} setRoundsTarget={setRoundsTarget}
+                onStart={startSession} lastSession={sessions[0]} stationsCount={stations.length} />
+            )}
+
+            {(phase === 'active' || phase === 'rest') && (
+              <ActiveScreen
+                day={day} stations={stations} stationIdx={stationIdx} currentRound={currentRound}
+                roundsTarget={roundsTarget} status={status} phase={phase} restSeconds={restSeconds}
+                pendingAdvance={pendingAdvance} weightInput={weightInput} setWeightInput={setWeightInput}
+                showInfo={showInfo} setShowInfo={setShowInfo}
+                onComplete={() => advance('done')} onSkip={() => advance('skipped')}
+                onSkipRest={skipRest} onQuit={quitSession} onEndSession={endSessionEarly}
+                onBack={goBack} canGoBack={canGoBack}
+              />
+            )}
+
+            {phase === 'finisher' && (
+              <FinisherScreen
+                key={finisherIdx} day={day} items={FINISHERS[day].items} finisherIdx={finisherIdx}
+                onComplete={() => finisherAdvance('done')} onSkip={() => finisherAdvance('skipped')}
+                onQuit={quitSession} onEndSession={endSessionEarly}
+                onBack={goBack} canGoBack={canGoBack}
+              />
+            )}
+
+            {phase === 'done' && (
+              <DoneScreen day={day} roundsTarget={roundsTarget} session={sessions[0]}
+                onNewSession={() => setPhase('setup')}
+                onViewHistory={() => setView('history')} saveError={saveError} />
+            )}
+          </>
+        ) : (
+          <HistoryScreen sessions={sessions} thisWeekCount={thisWeekCount}
+            expandedSession={expandedSession} setExpandedSession={setExpandedSession} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SetupScreen({ day, setDay, roundsTarget, setRoundsTarget, onStart, lastSession, stationsCount }) {
+  return (
+    <div className="mt-4 space-y-4">
+      <div className="rounded-2xl p-4" style={{ backgroundColor: COLORS.surface, border: `1px solid ${COLORS.border}` }}>
+        <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: COLORS.textMute }}>Choose workout</div>
+        <div className="flex gap-2">
+          {['A', 'B'].map(d => (
+            <button key={d} onClick={() => setDay(d)} className="flex-1 rounded-xl py-3 text-left px-3.5"
+              style={{ backgroundColor: day === d ? COLORS.surface2 : 'transparent', border: `1.5px solid ${day === d ? COLORS.upper : COLORS.border}` }}>
+              <div className="font-semibold text-base" style={{ fontFamily: FONTS.display }}>Workout {d}</div>
+              <div className="text-[11px] mt-0.5" style={{ color: COLORS.textMute }}>{stationsCount} stations</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-2xl p-4" style={{ backgroundColor: COLORS.surface, border: `1px solid ${COLORS.border}` }}>
+        <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: COLORS.textMute }}>Rounds</div>
+        <div className="flex items-center justify-between">
+          <button onClick={() => setRoundsTarget(r => Math.max(1, r - 1))} className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: COLORS.surface2 }}>
+            <Minus size={16} />
+          </button>
+          <div className="text-3xl font-bold tabular-nums" style={{ fontFamily: FONTS.mono }}>{roundsTarget}</div>
+          <button onClick={() => setRoundsTarget(r => Math.min(4, r + 1))} className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: COLORS.surface2 }}>
+            <Plus size={16} />
+          </button>
+        </div>
+        <div className="text-[11px] mt-2 text-center" style={{ color: COLORS.textMute }}>Start at 3 rounds, build toward 4 as it gets easier</div>
+      </div>
+
+      {lastSession && (
+        <div className="rounded-2xl p-3.5 flex items-center gap-3" style={{ backgroundColor: COLORS.surface2, border: `1px solid ${COLORS.border}` }}>
+          <Calendar size={16} color={COLORS.textMute} />
+          <div className="text-xs" style={{ color: COLORS.textMute }}>
+            Last session: <span style={{ color: COLORS.text }}>Workout {lastSession.day}</span> · {fmtDate(lastSession.date)}
+          </div>
+        </div>
+      )}
+
+      <button onClick={onStart} className="w-full rounded-2xl py-4 flex items-center justify-center gap-2 font-semibold text-base"
+        style={{ backgroundColor: COLORS.upper, color: '#1A0D06', fontFamily: FONTS.display }}>
+        <Play size={18} fill="#1A0D06" /> START SESSION
+      </button>
+
+      <div className="text-[11px] leading-relaxed text-center px-2" style={{ color: COLORS.textMute }}>
+        Unusual breathlessness, chest discomfort, or dizziness beyond normal exertion? Stop and check in with your cardiologist.
+      </div>
+    </div>
+  );
+}
+
+function WeightPicker({ value, onChange }) {
+  return (
+    <div className="relative">
+      <select value={value} onChange={e => onChange(e.target.value)}
+        className="w-full rounded-lg pl-3 pr-8 py-2 text-lg font-bold outline-none appearance-none"
+        style={{ backgroundColor: '#000000', color: COLORS.grayWhite, fontFamily: FONTS.mono, border: `1px solid ${COLORS.border}` }}>
+        <option value="" disabled style={{ backgroundColor: '#000000', color: COLORS.grayWhite }}>Select…</option>
+        {WEIGHT_OPTIONS.map(w => (
+          <option key={w} value={w} style={{ backgroundColor: '#000000', color: COLORS.grayWhite }}>
+            {w === 'Bodyweight' ? 'Bodyweight' : `${w} kg`}
+          </option>
+        ))}
+      </select>
+      <ChevronDown size={16} className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" color={COLORS.grayWhite} />
+    </div>
+  );
+}
+
+function ActiveScreen({ day, stations, stationIdx, currentRound, roundsTarget, status, phase, restSeconds,
+  pendingAdvance, weightInput, setWeightInput, showInfo, setShowInfo, onComplete, onSkip, onSkipRest, onQuit, onEndSession,
+  onBack, canGoBack }) {
+  const ex = stations[stationIdx];
+  const color = ex.region === 'Upper' ? COLORS.upper : COLORS.lower;
+
+  if (phase === 'rest') {
+    const label = pendingAdvance === 'round' ? 'Round complete — rest before next round' : 'Nice work — brief rest';
+    const total = pendingAdvance === 'round' ? 75 : 20;
+    return (
+      <div className="mt-4 space-y-4">
+        <TopBar currentRound={currentRound} roundsTarget={roundsTarget} onQuit={onQuit} onEndSession={onEndSession} />
+        <div className="rounded-2xl p-8 flex flex-col items-center justify-center text-center" style={{ backgroundColor: COLORS.surface, border: `1px solid ${COLORS.border}` }}>
+          <div className="text-xs font-semibold uppercase tracking-widest mb-4" style={{ color: COLORS.textMute }}>{label}</div>
+          <div className="relative w-32 h-32 flex items-center justify-center mb-4">
+            <svg width="128" height="128" className="absolute top-0 left-0 -rotate-90">
+              <circle cx="64" cy="64" r="56" stroke={COLORS.surface2} strokeWidth="8" fill="none" />
+              <circle cx="64" cy="64" r="56" stroke={COLORS.success} strokeWidth="8" fill="none"
+                strokeDasharray={2 * Math.PI * 56} strokeDashoffset={2 * Math.PI * 56 * (1 - restSeconds / total)}
+                strokeLinecap="round" style={{ transition: 'stroke-dashoffset 1s linear' }} />
+            </svg>
+            <div className="text-3xl font-bold tabular-nums" style={{ fontFamily: FONTS.mono }}>{fmtTime(restSeconds)}</div>
+          </div>
+          <div className="text-sm mb-5" style={{ color: COLORS.textMute }}>
+            Up next: <span style={{ color: COLORS.text, fontWeight: 600 }}>
+              {pendingAdvance === 'round' ? stations[0].name : stations[stationIdx + 1].name}
+            </span>
+          </div>
+          <button onClick={onSkipRest} className="rounded-full px-5 py-2 text-xs font-semibold flex items-center gap-1.5"
+            style={{ backgroundColor: COLORS.surface2, color: COLORS.text }}>
+            <SkipForward size={13} /> Skip rest
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-4 space-y-4">
+      <TopBar currentRound={currentRound} roundsTarget={roundsTarget} onQuit={onQuit} onEndSession={onEndSession} />
+      <StationTrack stations={stations} day={day} currentRound={currentRound} status={status} />
+      <div className="text-center text-[11px]" style={{ color: COLORS.textMute }}>
+        Station {stationIdx + 1} of {stations.length}
+      </div>
+
+      <div className="rounded-2xl p-5" style={{ backgroundColor: COLORS.surface, border: `1.5px solid ${color}55` }}>
+        <div className="flex items-center justify-between mb-2">
+          <RegionTag region={ex.region} />
+          <span className="text-[11px]" style={{ color: COLORS.textMute, fontFamily: FONTS.mono }}>{ex.equip}</span>
+        </div>
+        <div className="text-2xl font-semibold leading-tight mt-2" style={{ fontFamily: FONTS.display }}>{ex.name}</div>
+        <div className="text-sm mt-1" style={{ color: COLORS.textMute }}>{ex.muscle}</div>
+        <MuscleDiagram targets={ex.targets} />
+
+        <div className="flex items-center gap-4 mt-4">
+          <div className="flex-1">
+            <div className="text-[10px] uppercase tracking-widest mb-1" style={{ color: COLORS.textMute }}>Target reps</div>
+            <div className="text-lg font-bold" style={{ fontFamily: FONTS.mono }}>{ex.reps}</div>
+          </div>
+          <div className="flex-1">
+            <div className="text-[10px] uppercase tracking-widest mb-1" style={{ color: COLORS.textMute }}>Weight</div>
+            <WeightPicker value={weightInput} onChange={setWeightInput} />
+            {weightInput === '' && (
+              <div className="text-[10px] mt-1" style={{ color: COLORS.warn }}>Select a weight to continue</div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4 mt-4">
+          <button onClick={() => setShowInfo(v => !v)} className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: color }}>
+            <Info size={14} /> How to do this correctly {showInfo ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
+          <a href={ytSearchUrl(ex.name)} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: COLORS.textMute }}>
+            <Youtube size={14} /> Watch form videos
+          </a>
+        </div>
+        {showInfo && (
+          <ul className="mt-2.5 space-y-1.5">
+            {ex.cues.map((c, i) => (
+              <li key={i} className="text-sm leading-snug flex gap-2" style={{ color: COLORS.text }}>
+                <span style={{ color }}>·</span> {c}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="flex gap-2.5">
+        {canGoBack && (
+          <button onClick={onBack} className="rounded-2xl py-3.5 px-4 flex items-center justify-center" style={{ backgroundColor: COLORS.surface2, color: COLORS.textMute }}>
+            <ChevronLeft size={18} />
+          </button>
+        )}
+        <button onClick={onSkip} className="rounded-2xl py-3.5 px-5 text-sm font-semibold" style={{ backgroundColor: COLORS.surface2, color: COLORS.textMute }}>
+          Skip
+        </button>
+        <button onClick={onComplete} disabled={weightInput === ''} className="flex-1 rounded-2xl py-3.5 flex items-center justify-center gap-2 font-semibold text-base"
+          style={{ backgroundColor: weightInput === '' ? COLORS.surface2 : COLORS.success, color: weightInput === '' ? COLORS.textMute : '#06231A', fontFamily: FONTS.display, opacity: weightInput === '' ? 0.7 : 1, cursor: weightInput === '' ? 'not-allowed' : 'pointer' }}>
+          <Check size={19} strokeWidth={3} /> MARK COMPLETE
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function FinisherScreen({ day, items, finisherIdx, onComplete, onSkip, onQuit, onEndSession, onBack, canGoBack }) {
+  const [showInfo, setShowInfo] = useState(false);
+  const item = items[finisherIdx];
+  const isLast = finisherIdx === items.length - 1;
+
+  return (
+    <div className="mt-4 space-y-4">
+      <FinisherBar idx={finisherIdx} total={items.length} onQuit={onQuit} onEndSession={onEndSession} />
+      <div className="text-center text-[11px]" style={{ color: COLORS.textMute }}>
+        Core finisher · {finisherIdx + 1} of {items.length}
+      </div>
+
+      <div className="rounded-2xl p-5" style={{ backgroundColor: COLORS.surface, border: `1.5px solid ${COLORS.success}55` }}>
+        <div className="flex items-center justify-between mb-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
+            style={{ backgroundColor: COLORS.success + '20', color: COLORS.success, fontFamily: FONTS.mono, letterSpacing: '0.03em' }}>
+            CORE
+          </span>
+          <span className="text-[11px]" style={{ color: COLORS.textMute, fontFamily: FONTS.mono }}>Bodyweight</span>
+        </div>
+        <div className="text-2xl font-semibold leading-tight mt-2" style={{ fontFamily: FONTS.display }}>{item.name}</div>
+        <div className="text-sm mt-1" style={{ color: COLORS.textMute, fontFamily: FONTS.mono }}>{item.target}</div>
+        <MuscleDiagram targets={item.targets} />
+
+        <div className="flex items-center gap-4 mt-4">
+          <button onClick={() => setShowInfo(v => !v)} className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: COLORS.success }}>
+            <Info size={14} /> How to do this correctly {showInfo ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
+          <a href={ytSearchUrl(item.name)} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: COLORS.textMute }}>
+            <Youtube size={14} /> Watch form videos
+          </a>
+        </div>
+        {showInfo && (
+          <ul className="mt-2.5 space-y-1.5">
+            {item.cues.map((c, i) => (
+              <li key={i} className="text-sm leading-snug flex gap-2" style={{ color: COLORS.text }}>
+                <span style={{ color: COLORS.success }}>·</span> {c}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="flex gap-2.5">
+        {canGoBack && (
+          <button onClick={onBack} className="rounded-2xl py-3.5 px-4 flex items-center justify-center" style={{ backgroundColor: COLORS.surface2, color: COLORS.textMute }}>
+            <ChevronLeft size={18} />
+          </button>
+        )}
+        <button onClick={onSkip} className="rounded-2xl py-3.5 px-5 text-sm font-semibold" style={{ backgroundColor: COLORS.surface2, color: COLORS.textMute }}>
+          Skip
+        </button>
+        <button onClick={onComplete} className="flex-1 rounded-2xl py-3.5 flex items-center justify-center gap-2 font-semibold text-base"
+          style={{ backgroundColor: COLORS.success, color: '#06231A', fontFamily: FONTS.display }}>
+          <Check size={19} strokeWidth={3} /> {isLast ? 'FINISH SESSION' : 'MARK COMPLETE'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function SessionControlBar({ progress, onQuit, onEndSession }) {
+  const [confirming, setConfirming] = useState(false);
+
+  if (confirming) {
+    return (
+      <div className="rounded-xl p-3 flex items-center justify-between gap-2" style={{ backgroundColor: COLORS.surface2, border: `1px solid ${COLORS.warn}` }}>
+        <span className="text-xs font-semibold" style={{ color: COLORS.text }}>End session &amp; save progress so far?</span>
+        <div className="flex items-center gap-2 shrink-0">
+          <button onClick={() => setConfirming(false)} className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ color: COLORS.textMute }}>
+            Cancel
+          </button>
+          <button onClick={onEndSession} className="text-xs font-semibold px-3 py-1 rounded-full"
+            style={{ backgroundColor: COLORS.warn, color: '#2A1B00' }}>
+            Yes, end
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center justify-between">
+      {progress}
+      <div className="flex items-center gap-3">
+        <button onClick={() => setConfirming(true)} className="rounded-full px-3 py-1 text-xs font-semibold flex items-center gap-1"
+          style={{ backgroundColor: COLORS.surface2, color: COLORS.warn }}>
+          <Check size={12} /> End session
+        </button>
+        <button onClick={onQuit} className="text-xs flex items-center gap-1" style={{ color: COLORS.textMute }}>
+          <X size={13} /> Discard
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function TopBar({ currentRound, roundsTarget, onQuit, onEndSession }) {
+  const progress = (
+    <div className="flex items-center gap-1.5">
+      {Array.from({ length: roundsTarget }).map((_, i) => (
+        <div key={i} className="w-2 h-2 rounded-full" style={{ backgroundColor: i + 1 < currentRound ? COLORS.success : i + 1 === currentRound ? COLORS.upper : COLORS.surface2 }} />
+      ))}
+      <span className="ml-2 text-xs font-semibold" style={{ color: COLORS.textMute, fontFamily: FONTS.mono }}>ROUND {currentRound}/{roundsTarget}</span>
+    </div>
+  );
+  return <SessionControlBar progress={progress} onQuit={onQuit} onEndSession={onEndSession} />;
+}
+
+function FinisherBar({ idx, total, onQuit, onEndSession }) {
+  const progress = (
+    <div className="flex items-center gap-1.5">
+      {Array.from({ length: total }).map((_, i) => (
+        <div key={i} className="w-2 h-2 rounded-full" style={{ backgroundColor: i < idx ? COLORS.success : i === idx ? COLORS.success : COLORS.surface2 }} />
+      ))}
+      <span className="ml-2 text-xs font-semibold" style={{ color: COLORS.textMute, fontFamily: FONTS.mono }}>FINISHER {idx + 1}/{total}</span>
+    </div>
+  );
+  return <SessionControlBar progress={progress} onQuit={onQuit} onEndSession={onEndSession} />;
+}
+
+function DoneScreen({ day, roundsTarget, session, onNewSession, onViewHistory, saveError }) {
+  return (
+    <div className="mt-4 space-y-4">
+      <div className="rounded-2xl p-6 text-center" style={{ backgroundColor: COLORS.surface, border: `1px solid ${COLORS.border}` }}>
+        <Trophy className="mx-auto mb-3" size={32} color={session?.partial ? COLORS.textMute : COLORS.warn} />
+        <div className="text-xl font-bold" style={{ fontFamily: FONTS.display }}>{session?.partial ? 'Session ended early' : 'Session complete'}</div>
+        <div className="text-sm mt-1" style={{ color: COLORS.textMute }}>
+          Workout {day} · {session?.partial ? `${session.rounds}/${session.roundsTarget} rounds reached · ${session.exercises.length} exercises logged` : `${roundsTarget} rounds`}{session?.durationMin ? ` · ${session.durationMin} min` : ''}
+        </div>
+        {session && typeof session.finisherTotal === 'number' && (
+          <div className="text-xs mt-2" style={{ color: session.finisherCompleted === session.finisherTotal ? COLORS.success : COLORS.textMute }}>
+            Core finisher: {session.finisherCompleted}/{session.finisherTotal} completed
+          </div>
+        )}
+        {saveError && <div className="text-[11px] mt-2" style={{ color: COLORS.warn }}>Could not save this session — your results won't appear in History.</div>}
+      </div>
+
+      {session && (
+        <div className="rounded-2xl p-4" style={{ backgroundColor: COLORS.surface, border: `1px solid ${COLORS.border}` }}>
+          <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: COLORS.textMute }}>Loads used</div>
+          <div className="space-y-1">
+            {session.exercises.map((e, i) => (
+              <div key={i} className="flex justify-between text-sm">
+                <span style={{ color: COLORS.text }}>{e.name}</span>
+                <span style={{ color: COLORS.textMute, fontFamily: FONTS.mono }}>{formatWeight(e.weight)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="flex gap-2.5">
+        <button onClick={onViewHistory} className="flex-1 rounded-2xl py-3.5 text-sm font-semibold" style={{ backgroundColor: COLORS.surface2, color: COLORS.text }}>
+          View history
+        </button>
+        <button onClick={onNewSession} className="flex-1 rounded-2xl py-3.5 flex items-center justify-center gap-2 text-sm font-semibold"
+          style={{ backgroundColor: COLORS.upper, color: '#1A0D06' }}>
+          <RotateCcw size={15} /> New session
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function HistoryScreen({ sessions, thisWeekCount, expandedSession, setExpandedSession }) {
+  return (
+    <div className="mt-4 space-y-4">
+      <div className="grid grid-cols-3 gap-2.5">
+        <StatCard icon={<Flame size={15} color={COLORS.upper} />} label="This week" value={thisWeekCount} />
+        <StatCard icon={<Activity size={15} color={COLORS.lower} />} label="Total sessions" value={sessions.length} />
+        <StatCard icon={<TrendingUp size={15} color={COLORS.success} />} label="Last session" value={sessions[0] ? fmtDate(sessions[0].date).split(',')[0] : '—'} small />
+      </div>
+
+      {sessions.length === 0 ? (
+        <div className="rounded-2xl p-8 text-center" style={{ backgroundColor: COLORS.surface, border: `1px solid ${COLORS.border}` }}>
+          <ClipboardList className="mx-auto mb-2" size={24} color={COLORS.textMute} />
+          <div className="text-sm" style={{ color: COLORS.textMute }}>No sessions logged yet. Complete a workout to see it here.</div>
+        </div>
+      ) : (
+        <div className="space-y-2.5">
+          {sessions.map(s => {
+            const open = expandedSession === s.id;
+            const color = s.day === 'A' ? COLORS.upper : COLORS.lower;
+            return (
+              <div key={s.id} className="rounded-2xl overflow-hidden" style={{ backgroundColor: COLORS.surface, border: `1px solid ${COLORS.border}` }}>
+                <button onClick={() => setExpandedSession(open ? null : s.id)} className="w-full flex items-center justify-between p-4 text-left">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm" style={{ backgroundColor: color + '20', color, fontFamily: FONTS.display }}>
+                      {s.day}
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold">{fmtDate(s.date)}</div>
+                      <div className="text-[11px]" style={{ color: COLORS.textMute }}>
+                        {s.rounds} rounds{s.durationMin ? ` · ${s.durationMin} min` : ''}
+                        {s.partial && <span style={{ color: COLORS.warn }}> · ended early</span>}
+                      </div>
+                    </div>
+                  </div>
+                  {open ? <ChevronUp size={16} color={COLORS.textMute} /> : <ChevronDown size={16} color={COLORS.textMute} />}
+                </button>
+                {open && (
+                  <div className="px-4 pb-4 space-y-1" style={{ borderTop: `1px solid ${COLORS.border}` }}>
+                    {s.exercises.map((e, i) => (
+                      <div key={i} className="flex justify-between text-sm pt-2">
+                        <span>{e.name}</span>
+                        <span style={{ color: COLORS.textMute, fontFamily: FONTS.mono }}>{formatWeight(e.weight)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StatCard({ icon, label, value, small }) {
+  return (
+    <div className="rounded-2xl p-3 flex flex-col gap-1.5" style={{ backgroundColor: COLORS.surface, border: `1px solid ${COLORS.border}` }}>
+      {icon}
+      <div className={small ? 'text-sm font-bold' : 'text-xl font-bold'} style={{ fontFamily: FONTS.mono }}>{value}</div>
+      <div className="text-[10px] uppercase tracking-wide" style={{ color: COLORS.textMute }}>{label}</div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<PHATracker />);
+</script>
+</body>
+</html>
