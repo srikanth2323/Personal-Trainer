@@ -42,7 +42,7 @@ No build tools required on your end — this is a pre-built, self-contained app 
 
 ## Tech
 
-React 19 + Tailwind. React itself, ReactDOM, and all app code are precompiled and inlined directly into `index.html` — nothing is loaded from unpkg or any JS CDN at runtime, and the file has zero dependency on any sibling file to render. Styling is fully self-contained: `build-css.py` scans the source for the utility classes actually used and generates a small static stylesheet that is inlined into `index.html`, so there is no Tailwind CDN dependency at runtime. Web fonts are the only remote asset and are loaded via preconnect + stylesheet link as a progressive enhancement — if they don't load, the fallback stacks keep the layout and sizing identical. Data is stored in the browser's `localStorage`, so it stays on your device and isn't sent anywhere.
+React 19 + Tailwind. React itself, ReactDOM, and all app code are precompiled and inlined directly into `index.html` — nothing is loaded from unpkg or any JS CDN at runtime, and the file has zero dependency on any sibling file to render. Styling is fully self-contained: `build-css.py` scans the source for the utility classes actually used and generates a small static stylesheet that is inlined into `index.html`, so there is no Tailwind CDN dependency at runtime. There are no remote assets at all: typography uses system font stacks (Roboto on Android, SF on iOS, Segoe on Windows) rather than web fonts, so nothing is downloaded and rendering is identical offline. Data is stored in the browser's `localStorage`, so it stays on your device and isn't sent anywhere.
 
 ## Files
 
@@ -87,6 +87,13 @@ Shared UI primitives (`Card`, `Field`, `TextInput`, `SelectInput`, `TabSwitcher`
 The Day Planner can show a daily summary at a time you choose (default 08:00) and an alert one hour before any task that has a time set. These fire while the app is open and catch up when you next open it.
 
 A static web app cannot wake itself once closed — there is no reliable scheduled-notification API without a push server — so for alerts that always arrive, use the calendar buttons. Each task exports with an alarm a day before and an hour before, and there is a one-tap link to add a recurring daily summary reminder to Google Calendar.
+
+## Tuning the look
+
+Two lines in `index.html` control the overall feel:
+
+- `html{font-size:15px}` — spacing utilities are rem-based while some text sizes are px-based, so this controls how tight the UI feels. 16px is roomier, 14px tighter.
+- The `body{font-family:...}` stack and `FONTS` in `pha-tracker.jsx` — system fonts by design; adding a web font here reintroduces a network dependency.
 
 ## Notes
 
