@@ -22,7 +22,8 @@ No build tools required on your end — this is a pre-built, self-contained app 
 - **Lab report import (PDF or image)** — upload a PDF or photo of a lab report, or paste its text. Text-based PDFs are read directly from the embedded text layer (accurate, no OCR); scanned PDFs and photos fall back to OCR page by page. Recognised markers (hemoglobin, RBC, WBC, platelets, HbA1c, lipids, creatinine, tumour markers and more) plus the report date are extracted, and every value is shown for review and correction before saving. Markers you haven't tracked before are flagged as new
 - **Charted trends everywhere** — workout heart rate, session duration, total load and per-exercise weight progression; walking VO2max, heart rate and steps-per-minute; and any medical marker with two or more readings. All charts are labelled with month and year
 - **Manage medical parameters** — choose which markers appear in your trends, hide ones you don't want charted (readings are kept), or remove a marker and all its readings entirely
-- **Edit any medical record** — change the value, unit, category, date or notes of an entry in place, alongside delete
+- **Edit a whole record's date** — each date card has an Edit date action that moves every value in that report to a new date at once
+- **Edit any medical record** — change the value, unit, category, date or notes of an entry in place, alongside delete. Changing the date moves the record into the right date group
 - **Medical records grouped by date** — the log lists one card per test date with every value from that report bundled together, so a lab report reads as a single record rather than scattered rows
 - **Add missed parameters** — after a scan you can add any value the scanner didn't pick up, with an editable name, value and unit, before saving
 - **Task lifecycle** — every task can be completed, postponed (with quick +1 day / +3 days / +1 week or a custom date), or cancelled with a mandatory reason. Anything closed can be undone and reopened, and each task keeps a full history of what happened and when
@@ -41,7 +42,7 @@ No build tools required on your end — this is a pre-built, self-contained app 
 
 ## Tech
 
-React 19 + Tailwind. React itself, ReactDOM, and all app code are precompiled and inlined directly into `index.html` — nothing is loaded from unpkg or any JS CDN at runtime, and the file has zero dependency on any sibling file to render. Only Tailwind's styling CDN and Google Fonts are loaded remotely, and both degrade gracefully (the app stays fully usable, just less styled, if those don't load). Data is stored in the browser's `localStorage`, so it stays on your device and isn't sent anywhere.
+React 19 + Tailwind. React itself, ReactDOM, and all app code are precompiled and inlined directly into `index.html` — nothing is loaded from unpkg or any JS CDN at runtime, and the file has zero dependency on any sibling file to render. Styling is fully self-contained: `build-css.py` scans the source for the utility classes actually used and generates a small static stylesheet that is inlined into `index.html`, so there is no Tailwind CDN dependency at runtime. Web fonts are the only remote asset and are loaded via preconnect + stylesheet link as a progressive enhancement — if they don't load, the fallback stacks keep the layout and sizing identical. Data is stored in the browser's `localStorage`, so it stays on your device and isn't sent anywhere.
 
 ## Files
 
@@ -80,6 +81,12 @@ Open `index.html` directly, or host the folder anywhere static files can be serv
 `pha-tracker.jsx` is the single source; `index.html` is the built, self-contained output. The source is organised into labelled sections — theme, workout data, formatting helpers, muscle diagrams, day-planner logic, shared UI primitives, charts, medical parsing, screens, and the app root.
 
 Shared UI primitives (`Card`, `Field`, `TextInput`, `SelectInput`, `TabSwitcher`, `StatTiles`, `EmptyState`, `InfoNote`) exist so card and input styling isn't repeated inline across the file. One `SeriesDetailScreen` serves medical markers and workout/walking metrics alike, and `goodDirectionFor()` is the single source of truth for whether a rising value is good, neutral or bad.
+
+## Reminders
+
+The Day Planner can show a daily summary at a time you choose (default 08:00) and an alert one hour before any task that has a time set. These fire while the app is open and catch up when you next open it.
+
+A static web app cannot wake itself once closed — there is no reliable scheduled-notification API without a push server — so for alerts that always arrive, use the calendar buttons. Each task exports with an alarm a day before and an hour before, and there is a one-tap link to add a recurring daily summary reminder to Google Calendar.
 
 ## Notes
 
