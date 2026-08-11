@@ -18,6 +18,8 @@ No build tools required on your end — this is a pre-built, self-contained app 
 - **Home screen** — four sections: Workout, Walking, Medical, and Day Planner
 - **Hardware back button** — the Android back button steps back through the app (detail → list → home) instead of closing it
 - **Screenshot scanning (OCR)** — upload a Samsung Health screenshot and it attempts to auto-detect duration, calories, heart rate, steps, and VO2max. Every detected value is shown in an editable form for you to check and correct before saving — nothing saves automatically
+- **Family members** — records and appointments are kept per person, so you can track family alongside yourself. Add people, then filter every medical view by person or see everyone at once
+- **Upcoming medical** — schedule appointments, tests that are due, and medicine reminders, each with a date, optional time, location, notes and a repeat rule. Reminders arrive the day before and on the day, and each item exports to your calendar
 - **Medical section** — log vitals, test results, medications, appointments, symptoms and notes
 - **Lab report import (PDF or image)** — upload a PDF or photo of a lab report, or paste its text. Text-based PDFs are read directly from the embedded text layer (accurate, no OCR); scanned PDFs and photos fall back to OCR page by page. Recognised markers (hemoglobin, RBC, WBC, platelets, HbA1c, lipids, creatinine, tumour markers and more) plus the report date are extracted, and every value is shown for review and correction before saving. Markers you haven't tracked before are flagged as new
 - **Charted trends everywhere** — workout heart rate, session duration, total load and per-exercise weight progression; walking VO2max, heart rate and steps-per-minute; and any medical marker with two or more readings. All charts are labelled with month and year
@@ -84,7 +86,7 @@ Shared UI primitives (`Card`, `Field`, `TextInput`, `SelectInput`, `TabSwitcher`
 
 ## Reminders
 
-The Day Planner can show a daily summary at a time you choose (default 08:00) and an alert one hour before any task that has a time set. These fire while the app is open and catch up when you next open it.
+The Day Planner can show a daily summary at a time you choose (default 08:00) and an alert one hour before any task that has a time set. The summary reports progress rather than just what's left (e.g. "3/4 tasks done today — 1 left") and includes medical items due today and tomorrow. Scheduled medical items also get their own reminder the day before and on the day. These fire while the app is open and catch up when you next open it.
 
 A static web app cannot wake itself once closed — there is no reliable scheduled-notification API without a push server — so for alerts that always arrive, use the calendar buttons. Each task exports with an alarm a day before and an hour before, and there is a one-tap link to add a recurring daily summary reminder to Google Calendar.
 
