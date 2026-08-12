@@ -15,7 +15,7 @@ No build tools required on your end — this is a pre-built, self-contained app 
 - **Form guidance** — step-by-step cues for every exercise, plus a link to search YouTube for a demonstration
 - **Muscle diagrams** — simple front/back body silhouettes highlighting what each exercise targets
 - **History** — every session is saved locally on your device (sessions this week, total sessions, per-exercise load history)
-- **Home screen** — four sections: Workout, Walking, Medical, and Day Planner
+- **Home screen** — three sections: Fitness (workouts, cardio, activities), Health, and Day Planner
 - **Hardware back button** — the Android back button steps back through the app (detail → list → home) instead of closing it
 - **Screenshot scanning (OCR)** — upload a Samsung Health screenshot and it attempts to auto-detect duration, calories, heart rate, steps, and VO2max. Every detected value is shown in an editable form for you to check and correct before saving — nothing saves automatically
 - **Family members** — records and appointments are kept per person, so you can track family alongside yourself. Add people, then filter every medical view by person or see everyone at once
@@ -27,7 +27,8 @@ No build tools required on your end — this is a pre-built, self-contained app 
 - **Edit a whole record's date** — each date card has an Edit date action that moves every value in that report to a new date at once
 - **Edit any medical record** — change the value, unit, category, date or notes of an entry in place, alongside delete. Changing the date moves the record into the right date group
 - **Records collapse by date** — each test date is a collapsible card showing the value count and which panels it covers, with expand-all / collapse-all
-- **Trends grouped by panel** — markers are organised into lipids, liver, kidney, heart & inflammation, CBC, vitamins and so on rather than one long list
+- **Trends grouped by panel** — markers are organised into collapsible panels (heart & inflammation, lipids, blood sugar, CBC, kidney, liver, vitamins, thyroid, tumour markers) with expand-all / collapse-all
+- **Fitness** — one section with three tabs: Workout (the PHA circuit), Cardio (walking, running, jogging, cycling, stairs, swimming and any type you add), and Activities (gardening, housework, yoga and your own types). Cardio and activity logs are editable, carry their own date and type, and can take Samsung Health data at any time via the screenshot scanner or manual entry
 - **Medical records grouped by date** — the log lists one card per test date with every value from that report bundled together, so a lab report reads as a single record rather than scattered rows
 - **Add missed parameters** — after a scan you can add any value the scanner didn't pick up, with an editable name, value and unit, before saving
 - **Task lifecycle** — every task can be completed, postponed (with quick +1 day / +3 days / +1 week or a custom date), or cancelled with a mandatory reason. Anything closed can be undone and reopened, and each task keeps a full history of what happened and when
