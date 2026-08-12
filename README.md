@@ -24,6 +24,7 @@ No build tools required on your end — this is a pre-built, self-contained app 
 - **Lab report import (PDF or image)** — upload a PDF or photo of a lab report, or paste its text. Text-based PDFs are read directly from the embedded text layer (accurate, no OCR); scanned PDFs and photos fall back to OCR page by page. Around 67 recognised markers across nine panels — heart & inflammation (hs-CRP, homocysteine, Lp(a), ApoB/ApoA1, NT-proBNP, troponin, ESR), lipids, blood sugar, CBC, kidney & electrolytes (incl. uric acid, eGFR), liver, vitamins & minerals (B12, D, folate, ferritin), thyroid, and tumour markers (AFP, beta-hCG, LDH, PSA) plus the report date are extracted, and every value is shown for review and correction before saving. Markers you haven't tracked before are flagged as new
 - **Charted trends everywhere** — workout heart rate, session duration, total load and per-exercise weight progression; walking VO2max, heart rate and steps-per-minute; and any medical marker with two or more readings. All charts are labelled with month and year
 - **Manage medical parameters** — choose which markers appear in your trends, hide ones you don't want charted (readings are kept), or remove a marker and all its readings entirely
+- **Edit logged workout sessions** — change the date, duration, rounds, RPE and the weight used on each exercise after the fact, and add or correct the Samsung Health data attached to that session
 - **Edit a whole record's date** — each date card has an Edit date action that moves every value in that report to a new date at once
 - **Edit any medical record** — change the value, unit, category, date or notes of an entry in place, alongside delete. Changing the date moves the record into the right date group
 - **Records collapse by date** — each test date is a collapsible card showing the value count and which panels it covers, with expand-all / collapse-all
@@ -55,6 +56,7 @@ React 19 + Tailwind. React itself, ReactDOM, and all app code are precompiled an
 |---|---|
 | `index.html` | The entire app — React, ReactDOM, and all app code inlined into one file |
 | `manifest.json` | PWA manifest (name, icons, theme color) — needed for installing as an app |
+| `sw.js` | Service worker — **required for notifications on Android**, which forbids the `Notification` constructor and only permits notifications shown from a service worker |
 | `icon-192.png` / `icon-512.png` | App icons |
 
 ## Running it
@@ -64,9 +66,9 @@ Open `index.html` directly, or host the folder anywhere static files can be serv
 
 **Want it as an installable Android app?**
 
-1. **Host these 4 files on GitHub Pages:**
+1. **Host these 5 files on GitHub Pages:**
    - Create a public GitHub repo
-   - Upload `index.html`, `manifest.json`, `icon-192.png`, `icon-512.png`
+   - Upload `index.html`, `sw.js`, `manifest.json`, `icon-192.png`, `icon-512.png`
    - Go to **Settings → Pages**, set source to your main branch / root, save
    - GitHub gives you a live URL like `https://yourusername.github.io/training-tracker/`
 
@@ -90,6 +92,8 @@ Shared UI primitives (`Card`, `Field`, `TextInput`, `SelectInput`, `TabSwitcher`
 ## Reminders
 
 The Day Planner can show a daily summary at a time you choose (default 08:00) and an alert one hour before any task that has a time set. The summary reports progress rather than just what's left (e.g. "3/4 tasks done today — 1 left") and includes medical items due today and tomorrow. Scheduled medical items also get their own reminder the day before and on the day. These fire while the app is open and catch up when you next open it.
+
+Notifications are delivered through `sw.js` (the service worker), because Android Chrome refuses the plain `Notification` constructor. This means reminders **only work over HTTPS** — GitHub Pages is fine, but opening `index.html` as a local file will not show notifications. There's a "Send a test notification" button in the Reminders panel to check it end to end.
 
 A static web app cannot wake itself once closed — there is no reliable scheduled-notification API without a push server — so for alerts that always arrive, use the calendar buttons. Each task exports with an alarm a day before and an hour before, and there is a one-tap link to add a recurring daily summary reminder to Google Calendar.
 
