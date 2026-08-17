@@ -108,14 +108,20 @@ Two lines in `index.html` control the overall feel:
 
 - **Muscle impact map** — a front/back figure shaded yellow→red by how much work each muscle has taken over the last 7 days, derived from logged sessions. It reflects training load, not measured soreness.
 - **Weight progression by muscle** — the heaviest load logged for each muscle group over time, tappable for a full chart.
-- **Load balance** — compares each muscle's best load against the proportion usually seen relative to a hinge lift (deadlift/RDL), and flags anything materially behind. Only the *primary* mover of each exercise is credited, so a 60 kg deadlift isn't counted as a 60 kg back or biceps lift.
+- **Load balance** — compares each muscle's best load against the proportion usually seen relative to a hinge lift (deadlift/RDL), and flags anything materially behind. The primary mover of an exercise is credited in full and assisting muscles at half, so a 60 kg deadlift isn't counted as a 60 kg biceps lift — but muscles that are never the primary mover (triceps, glutes, forearms in this plan) still register.
 - **Effort estimate from heart rate** — where Samsung Health avg/max HR is attached to a session, an RPE estimate is derived from heart-rate reserve (Karvonen), anchored on age-predicted HRmax.
 
 These are relative comparisons between your own lifts, deliberately **not** load prescriptions from population tables. What weight is appropriate for you depends on your cardiologist's guidance and how the session actually feels.
 
+## Per-session insight
+
+Expanding a session in the workout log shows:
+- **Estimated effort** — a composite 1–10 figure from heart rate (weighted heaviest), calorie burn rate converted to METs, and duration, each shown separately so you can see what drove it. It compares against your own RPE rating and says so when the signals disagree.
+- **Muscles worked this session** — the heat map scoped to that single session rather than the 7-day window.
+
 ## Health reference ranges
 
-Trend charts and detail views show a shaded band for general adult reference intervals, with a note when the latest reading sits outside it. Laboratories differ and ranges vary by age, sex and method — **the range printed on your own report is the one that counts**, and interpretation belongs with your doctor.
+Trend charts and detail views show a shaded band for general adult reference intervals. Readings are colour-coded by how far they sit from that band — green inside, then a yellow-to-red gradient scaled to the distance outside — on the chart line, each data point, and the status label. Laboratories differ and ranges vary by age, sex and method — **the range printed on your own report is the one that counts**, and interpretation belongs with your doctor.
 
 ## Notes
 
