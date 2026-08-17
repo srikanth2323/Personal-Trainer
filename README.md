@@ -104,6 +104,19 @@ Two lines in `index.html` control the overall feel:
 - `html{font-size:15px}` — spacing utilities are rem-based while some text sizes are px-based, so this controls how tight the UI feels. 16px is roomier, 14px tighter.
 - The `body{font-family:...}` stack and `FONTS` in `pha-tracker.jsx` — system fonts by design; adding a web font here reintroduces a network dependency.
 
+## Muscle-level analysis (Fitness → Workout → Trends)
+
+- **Muscle impact map** — a front/back figure shaded yellow→red by how much work each muscle has taken over the last 7 days, derived from logged sessions. It reflects training load, not measured soreness.
+- **Weight progression by muscle** — the heaviest load logged for each muscle group over time, tappable for a full chart.
+- **Load balance** — compares each muscle's best load against the proportion usually seen relative to a hinge lift (deadlift/RDL), and flags anything materially behind. Only the *primary* mover of each exercise is credited, so a 60 kg deadlift isn't counted as a 60 kg back or biceps lift.
+- **Effort estimate from heart rate** — where Samsung Health avg/max HR is attached to a session, an RPE estimate is derived from heart-rate reserve (Karvonen), anchored on age-predicted HRmax.
+
+These are relative comparisons between your own lifts, deliberately **not** load prescriptions from population tables. What weight is appropriate for you depends on your cardiologist's guidance and how the session actually feels.
+
+## Health reference ranges
+
+Trend charts and detail views show a shaded band for general adult reference intervals, with a note when the latest reading sits outside it. Laboratories differ and ranges vary by age, sex and method — **the range printed on your own report is the one that counts**, and interpretation belongs with your doctor.
+
 ## Notes
 
 - All workout data lives in your browser's local storage. Clearing your browser data or switching browsers/devices will reset your history — there's no cloud sync.
