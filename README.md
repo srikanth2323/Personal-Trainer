@@ -106,7 +106,7 @@ Two lines in `index.html` control the overall feel:
 
 ## Muscle-level analysis (Fitness → Workout → Trends)
 
-- **Muscle impact map** — a front/back figure shaded yellow→red by how much work each muscle has taken over the last 7 days, derived from logged sessions. It reflects training load, not measured soreness.
+- **Muscle impact map** — a front/back figure shaded yellow→red by how much work each muscle has taken, over a selectable 7 / 30 / 90-day window, with the number of sessions in that window shown. It reflects training load, not measured soreness.
 - **Weight progression by muscle** — the heaviest load logged for each muscle group over time, tappable for a full chart.
 - **Load balance** — compares each muscle's best load against the proportion usually seen relative to a hinge lift (deadlift/RDL), and flags anything materially behind. Muscles without a comparison say *why*: either they're only trained in the workout you haven't done recently, or they're trained by a bodyweight movement whose estimated load isn't on the same scale as barbell work. Bodyweight loads are estimated from your bodyweight and marked with an asterisk; a real logged weight always takes precedence over an estimate. The primary mover of an exercise is credited in full and assisting muscles at half, so a 60 kg deadlift isn't counted as a 60 kg biceps lift — but muscles that are never the primary mover (triceps, glutes, forearms in this plan) still register.
 - **Effort estimate from heart rate** — where Samsung Health avg/max HR is attached to a session, an RPE estimate is derived from heart-rate reserve (Karvonen), anchored on age-predicted HRmax.
@@ -117,7 +117,8 @@ These are relative comparisons between your own lifts, deliberately **not** load
 
 Expanding a session in the workout log shows:
 - **Estimated effort** — a composite 1–10 figure from heart rate (weighted heaviest), calorie burn rate converted to METs, and duration, each shown separately so you can see what drove it. It compares against your own RPE rating and says so when the signals disagree.
-- **Muscles worked this session** — the heat map scoped to that single session rather than the 7-day window.
+- **Muscles worked this session** — the heat map scoped to that single session.
+- **Load vs your previous best** — every exercise compared against the heaviest you'd previously logged for it, marked up / down / same / first time, with a note when something has sat at the same load for three or more sessions and may be ready for a small increase.
 
 ## Marker explanations
 
