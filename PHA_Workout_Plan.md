@@ -16,23 +16,24 @@ Since this is your *only* training long-term, one circuit repeated forever will 
 
 ## Muscle Coverage Map (across A + B combined)
 
-| Region | Covered by |
-|--------|-----------|
-| Quads | Squats, split squats, lunges |
-| Hamstrings | RDLs, deadlifts, good mornings, hip thrust |
-| Glutes | Squats, deadlifts, hip thrust, split squats |
-| Calves | Standing calf raise (both days) |
-| Chest | Bench press, incline press, push-ups, dips |
-| Back (lats/mid-back) | Rows, deadlifts, inverted rows |
-| Traps | Barbell shrugs, plus deadlifts and rows |
-| Shoulders (front/side) | Standing DB shoulder press, dedicated DB lateral raise |
-| Rear delts | Bent-over DB reverse fly, bent-over wide-grip DB row |
-| Biceps | Barbell/EZ curls, rows |
-| Triceps | Bench/OHP, skull crusher, dips, push-ups |
-| Forearms/grip | Barbell shrugs, deadlifts, rows |
-| Inner thigh / hips | Lateral lunge |
-| Core/abs | Plank, side plank, twists, bodyweight leg raises |
-| Lower back | Good mornings, superman |
+| Muscle | Covered by |
+|---|---|
+| Quads | Barbell Back Squat, Bulgarian Split Squat, Front-Foot-Elevated Split Squat, Lateral Lunge |
+| Hamstrings | Barbell Deadlift, Barbell Good Morning (light load), Barbell Hip Thrust, Barbell Romanian Deadlift |
+| Glutes | Barbell Back Squat, Barbell Deadlift, Barbell Hip Thrust, Barbell Romanian Deadlift, Bulgarian Split Squat, Front-Foot-Elevated Split Squat, Lateral Lunge |
+| Calves | Standing Calf Raise |
+| Inner thigh | Lateral Lunge |
+| Chest | Bench Dips, Flat DB Bench Press, Pike Push-Up, Push-Ups (feet elevated on bench) |
+| Back / Lats | Barbell Deadlift, Bent-Over Barbell Row, Bent-Over DB Reverse Fly, Bent-Over Wide-Grip DB Row, Single-Arm DB Row |
+| Shoulders | DB Lateral Raise, DB Standing Shoulder Press, Pike Push-Up, Standing Barbell Overhead Press |
+| Rear delts | Bent-Over DB Reverse Fly, Bent-Over Wide-Grip DB Row |
+| Traps | Barbell Shrugs |
+| Biceps | Bent-Over Barbell Row, EZ Bar Bicep Curl, Single-Arm DB Row |
+| Triceps | Bench Dips, Flat DB Bench Press, Push-Ups (feet elevated on bench), Standing Barbell Overhead Press |
+| Forearms / grip | Barbell Shrugs |
+| Core / abs | Bodyweight Leg Raises, Plank |
+| Obliques | DB Russian Twists, Side Plank |
+| Lower back | Barbell Good Morning (light load), Superman |
 
 ---
 
@@ -45,45 +46,41 @@ Since this is your *only* training long-term, one circuit repeated forever will 
 
 ## Workout A
 
-| # | Exercise | Region | Reps |
-|---|----------|--------|------|
-| 1 | Barbell Back Squat (straight bar) | Lower – quads/glutes | 12-15 |
-| 2 | Flat DB Bench Press | Upper – chest/triceps | 12-15 |
-| 3 | Barbell Romanian Deadlift | Lower – hamstrings/glutes | 12-15 |
-| 4 | Bent-Over Barbell Row | Upper – back/biceps | 12-15 |
-| 5 | Bulgarian Split Squat (DB, rear foot on bench) | Lower – unilateral quad/glute | 10-12/side |
-| 6 | Standing Barbell Overhead Press | Upper – shoulders/triceps | 12-15 |
-| 7 | Standing Calf Raise (DB in hand, or barbell on back) | Lower – calves | 15-20 |
-| 8 | EZ Bar Bicep Curl | Upper – biceps | 12-15 |
-| 9 | Bodyweight Push-Ups (feet elevated on bench for more load) | Upper – chest/triceps | To near-failure |
-| 10 | DB Lateral Raise | Upper – side delts | 12-15 |
-| 11 | Bent-Over DB Reverse Fly | Upper – rear delts/upper back | 12-15 |
-| 12 | Lateral Lunge (bodyweight or light DBs) | Lower – inner thigh/glutes | 10-12/side |
+| # | Exercise | Equipment | Region | Reps |
+|---|---|---|---|---|
+| 1 | Barbell Back Squat | Straight bar + plates | Lower – Quads / Glutes | 12–15 |
+| 2 | Flat DB Bench Press | Dumbbells + bench | Upper – Chest / Triceps | 12–15 |
+| 3 | Barbell Romanian Deadlift | Straight bar + plates | Lower – Hamstrings / Glutes | 12–15 |
+| 4 | Bent-Over Barbell Row | Straight bar + plates | Upper – Back / Biceps | 12–15 |
+| 5 | Bulgarian Split Squat | Dumbbells + bench | Lower – Quad / Glute (unilateral) | 10–12/side |
+| 6 | Standing Barbell Overhead Press | Straight bar + plates | Upper – Shoulders / Triceps | 12–15 |
+| 7 | EZ Bar Bicep Curl | EZ bar + plates | Upper – Biceps | 12–15 |
+| 8 | Lateral Lunge | Bodyweight or light DBs | Lower – Inner thigh / Glutes | 10–12/side |
+| 9 | Push-Ups (feet elevated on bench) | Bodyweight + bench | Upper – Chest / Triceps | To near-failure |
+| 10 | Standing Calf Raise | Dumbbells (or bar on back) | Lower – Calves | 15–20 |
+| 11 | DB Lateral Raise | Dumbbells | Upper – Side Delts | 12–15 |
+| 12 | Bent-Over DB Reverse Fly | Dumbbells | Upper – Rear delts / Upper back | 12–15 |
 
-**Core finisher:** Plank 3 x 30-45 sec + Bodyweight Leg Raises 2 x 15 (add at end of every A session)
-
----
+**Core finisher:** Plank (3 x 30–45 sec) + Bodyweight Leg Raises (2 x 15)
 
 ## Workout B
 
-| # | Exercise | Region | Reps |
-|---|----------|--------|------|
-| 1 | Barbell Deadlift (conventional, straight bar) | Lower – posterior chain/back | 10-12 |
-| 2 | Pike Push-Up (bodyweight, feet on floor or bench for progression) | Upper – upper chest/shoulders | To near-failure |
-| 3 | Barbell Front-Foot-Elevated Split Squat / Lunge | Lower – quads/glutes | 10-12/side |
-| 4 | Single-Arm DB Row (bench-supported) | Upper – back/lats | 12-15/side |
-| 5 | Barbell Hip Thrust (upper back on bench) | Lower – glutes/hamstrings | 12-15 |
-| 6 | DB Standing Shoulder Press | Upper – shoulders (front/side) | 10-12 |
-| 7 | Barbell Good Morning (light plate load) | Lower – hamstrings/lower back | 12-15 |
-| 8 | Bent-Over Wide-Grip DB Row | Upper – rear delts/upper back | 12-15 |
-| 9 | Bench Dips (hands on bench, feet on floor) | Upper – triceps/chest | To near-failure |
-| 10 | Bent-Over DB Reverse Fly | Upper – rear delts/upper back | 12-15 |
-| 11 | Barbell Shrugs | Upper – traps/grip | 15-20 |
-| 12 | Standing Calf Raise | Lower – calves | 15-20 |
+| # | Exercise | Equipment | Region | Reps |
+|---|---|---|---|---|
+| 1 | Barbell Deadlift | Straight bar + plates | Lower – Posterior chain / Back | 10–12 |
+| 2 | Pike Push-Up | Bodyweight (+ bench for progression) | Upper – Upper chest / Shoulders | To near-failure |
+| 3 | Front-Foot-Elevated Split Squat | Straight bar + small plate | Lower – Quads / Glutes | 10–12/side |
+| 4 | Single-Arm DB Row | Dumbbell + bench | Upper – Back / Lats | 12–15/side |
+| 5 | Bench Dips | Bodyweight + bench | Upper – Triceps / Chest | To near-failure |
+| 6 | Barbell Hip Thrust | Straight bar + plates + bench | Lower – Glutes / Hamstrings | 12–15 |
+| 7 | Barbell Shrugs | Straight bar + plates | Upper – Traps / Grip | 15–20 |
+| 8 | Standing Calf Raise | Dumbbells (or bar on back) | Lower – Calves | 15–20 |
+| 9 | DB Standing Shoulder Press | Dumbbells | Upper – Shoulders (front/side) | 10–12 |
+| 10 | Bent-Over Wide-Grip DB Row | Dumbbells | Upper – Rear delts / Upper back | 12–15 |
+| 11 | Barbell Good Morning (light load) | Straight bar + light plates | Lower – Hamstrings / Lower back | 12–15 |
+| 12 | Bent-Over DB Reverse Fly | Dumbbells | Upper – Rear delts / Upper back | 12–15 |
 
-**Core finisher:** Side plank 3 x 20-30 sec/side + DB Russian twists 2 x 15/side + Bodyweight Superman 2 x 15 (lower back)
-
----
+**Core finisher:** Side Plank (3 x 20–30 sec/side) + DB Russian Twists (2 x 15/side) + Superman (2 x 15)
 
 ## PHA Execution Rules
 - Minimal rest (15-20 sec) between exercises within a round — this is what makes it PHA, not standard strength work
@@ -103,9 +100,10 @@ Add weight roughly every 1-2 weeks on an exercise once you can complete all roun
 ---
 
 ## Loading Suggestions (starting points — adjust to your form)
-- Squats, deadlifts, RDLs, rows, hip thrusts: load the barbell up, using your 5-40kg plates — you have plenty of headroom
+- Squats, deadlifts, RDLs, rows, hip thrusts, shrugs: load the barbell up, using your 5-40kg plates
+- Good mornings: deliberately light — this is a spinal-loading hinge, and it is the last barbell station so the bar is already stripped down
 - Overhead press, bench press: moderate barbell/DB load — shoulders and chest usually lag legs/back in relative strength
-- Curls, lateral raises, skull crushers: 8-15kg DBs / light-moderate EZ bar
+- Curls, lateral raises, reverse flies: 5-15kg DBs / light-moderate EZ bar
 - Bulgarian split squats, lunges: 8-12kg DBs per hand to start (balance adds difficulty even at lighter loads)
 
 ---
@@ -134,3 +132,11 @@ Add weight roughly every 1-2 weeks on an exercise once you can complete all roun
 - Track how you feel each session — unusual breathlessness, chest discomfort, or dizziness beyond normal exertion means stop and check in with your cardiologist, not push through
 - Every 6-8 weeks, do a quick self-check: are rounds getting easier at the same load? That's your progression signal
 - If you miss more than 2 weeks (illness, travel), restart at Foundation-phase loads rather than where you left off
+
+## Ordering rationale
+
+Station order is not arbitrary. Three constraints shape it:
+
+1. **Upper/lower alternation.** PHA works by shunting blood between the upper and lower body, which keeps the heart working without any one muscle failing. With 7 upper and 5 lower stations perfect alternation isn't possible, but the longest run of same-region work is held to two.
+2. **Heavy compounds early and spaced.** The most demanding lift comes first, while fresh. In Workout B the deadlift (1) and hip thrust (6) are deliberately separated rather than stacked, to avoid two near-maximal efforts in quick succession.
+3. **Descending barbell load.** Barbell stations run heaviest to lightest — A: squat → RDL → row → overhead press → EZ curl; B: deadlift → hip thrust → shrugs → good morning. Plates come off as the circuit progresses rather than going back on. The light-load good morning is the last barbell station for this reason.
