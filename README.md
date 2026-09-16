@@ -89,6 +89,19 @@ Open `index.html` directly, or host the folder anywhere static files can be serv
 
 Shared UI primitives (`Card`, `Field`, `TextInput`, `SelectInput`, `TabSwitcher`, `StatTiles`, `EmptyState`, `InfoNote`) exist so card and input styling isn't repeated inline across the file. One `SeriesDetailScreen` serves medical markers and workout/walking metrics alike, and `goodDirectionFor()` is the single source of truth for whether a rising value is good, neutral or bad.
 
+## Excel report export
+
+Every Trends view (Health, Workout, Cardio, Activities) has a **Generate report (.xlsx)** button. Pick a date range — last 7/30/90 days, this year, all time, or a custom range — and it downloads a real Excel workbook built entirely on-device:
+
+- **Summary** — date range, generation time, people included, and a note that this is self-reported app data, not a clinical measurement
+- **Health Records** — every logged marker in range: date, person, name, value, unit, category, notes
+- **Workout Sessions** — one row per session: date, day, rounds, duration, RPE, and the linked Samsung Health circuit data
+- **Workout Exercises** — one row per exercise per session, with its primary muscle target, for detailed analysis
+- **Cardio & Activity** — every logged walk/run/activity: type, duration, calories, heart rate, steps, VO2max
+- **Profile** — age, sex, height, latest bodyweight, for context
+
+Sheets with no matching data in the selected range are omitted rather than shown empty. Nothing is uploaded to generate the file — there's no xlsx library dependency either; the workbook is built with a small hand-written OOXML/ZIP encoder in the app itself, so this works completely offline.
+
 ## Reminders
 
 The Day Planner can show a daily summary at a time you choose (default 08:00) and an alert one hour before any task that has a time set. The summary reports progress rather than just what's left (e.g. "3/4 tasks done today — 1 left") and includes medical items due today and tomorrow. Scheduled medical items also get their own reminder the day before and on the day. These fire while the app is open and catch up when you next open it.
@@ -103,6 +116,16 @@ Two lines in `index.html` control the overall feel:
 
 - `html{font-size:15px}` — spacing utilities are rem-based while some text sizes are px-based, so this controls how tight the UI feels. 16px is roomier, 14px tighter.
 - The `body{font-family:...}` stack and `FONTS` in `pha-tracker.jsx` — system fonts by design; adding a web font here reintroduces a network dependency.
+
+## Known issue: Workout B's barbell load order
+
+Workout B's exercises no longer run strictly heaviest-to-lightest bar load: Barbell Shrugs has been progressed to 40kg, heavier than the Deadlift and Hip Thrust before it, so plates need to go back on mid-session rather than only coming off. This wasn't touched by the 13-station rebuild — it drifted because different exercises progress at different rates — and hasn't been fixed pending a decision on reordering B.
+
+## Regional muscle detail
+
+Exercise cards show regional bias alongside the muscle group where it's established and actionable — "Chest (mid)" for flat bench vs "Chest (upper)" for feet-elevated push-ups vs "Chest (lower)" for hands-elevated push-ups, "Biceps (long head)" vs "Biceps (short head)" for the two EZ bar grips, "Glutes (max)" for hip thrust vs "Glutes (medius)" for lateral lunge. This is deliberately limited to regions with real, well-established bias and an exercise in the plan that can actually train that region differently — quads/hamstrings/calves don't get subdivided since the plan has no exercises that bias their sub-regions differently. The aggregate views (heat map, load balance) stay at the group level; regional detail only shows on individual exercise cards, so the analysis views don't fragment into noise.
+
+Both workouts grew to 13 stations each to close two gaps: no lower-chest-biased press anywhere in the plan (added Push-Ups, hands elevated — Workout A) and no dedicated short-head-biased curl (added Wide-Grip EZ Bar Curl, using the same bar's outer grips — Workout B, which previously had no isolated biceps exercise at all). Each addition landed in the workout that specifically lacked it, rather than stacking both into one day. Both new exercises were inserted into the existing alternation-and-descending-load order rather than appended — in Workout A, Standing Calf Raise sits between the two push-up variants so a near-identical chest movement doesn't repeat back-to-back on pre-fatigued muscle.
 
 ## Muscle-level analysis (Fitness → Workout → Trends)
 
