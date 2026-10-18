@@ -62,10 +62,14 @@ const WORKOUTS = {
       cues: ['Stand tall, step wide to one side, keeping the trailing leg straight', 'Push hips back and bend the stepping knee, keeping that foot flat', 'Feel a stretch along the inner thigh of the straight leg', 'Push off the bent leg to return to standing — keep the torso upright'] },
     { name: 'Push-Ups (feet elevated on bench)', equip: 'Bodyweight + bench', region: 'Upper', muscle: 'Chest (upper) / Triceps', reps: 'To near-failure', targets: ['chest', 'triceps'],
       cues: ['Hands slightly wider than shoulders, body in a straight line', 'Feet on bench for added load, core and glutes braced', 'Lower chest toward the floor, elbows ~45° from torso', 'Press back up without letting hips sag or pike'] },
-    { name: 'Standing Calf Raise', equip: 'Dumbbells (or bar on back)', region: 'Lower', muscle: 'Calves', reps: '15–20', targets: ['calves'],
-      cues: ['Stand tall, weight at sides or on back, feet hip-width', 'Rise onto toes as high as possible, pause briefly', 'Lower slowly past the start position for a full stretch', 'Keep knees soft, not locked out'] },
+    { name: 'Towel-Slider Hamstring Curl', equip: 'Towel + smooth floor (bodyweight)', region: 'Lower', muscle: 'Hamstrings (knee-flexion)', reps: '10–12', targets: ['hamstrings'],
+      cues: ['Lie on your back, heels on a towel on a smooth floor, knees bent, hips lifted', 'Keep hips up and straight, slide heels away until legs are nearly straight', 'Pull heels back in by bending the knees, squeezing the back of the thighs', 'If it is too hard, slide out less far; breathe out as you pull in'] },
     { name: 'Push-Ups (hands elevated on bench)', equip: 'Bodyweight + bench', region: 'Upper', muscle: 'Chest (lower) / Triceps', reps: 'To near-failure', targets: ['chest', 'triceps'],
       cues: ['Hands on the bench edge, feet on the floor — opposite setup to your other push-up variant', 'Body forms a straight line, core braced', 'Lower your chest toward the bench, elbows at ~45°', 'Press back up — this angle biases lower chest, where the feet-elevated version biases upper chest'] },
+    { name: 'Standing Calf Raise', equip: 'Dumbbells (or bar on back)', region: 'Lower', muscle: 'Calves', reps: '15–20', targets: ['calves'],
+      cues: ['Stand tall, weight at sides or on back, feet hip-width', 'Rise onto toes as high as possible, pause briefly', 'Lower slowly past the start position for a full stretch', 'Keep knees soft, not locked out'] },
+    { name: 'Reverse EZ Bar Curl', equip: 'EZ bar + light plates (overhand grip)', region: 'Upper', muscle: 'Brachialis / Forearms', reps: '12–15', targets: ['biceps', 'forearms'],
+      cues: ['Grip the EZ bar overhand (palms down) on the angled grips, elbows tucked to sides', 'Curl up slowly without swinging — go lighter than your normal curl', 'Keep wrists straight, do not let them bend back', 'Lower under control to full extension'] },
     { name: 'Bent-Over DB Reverse Fly', equip: 'Dumbbells', region: 'Upper', muscle: 'Rear delts / Upper back', reps: '12–15', targets: ['rearDelts', 'back'],
       cues: ['Hinge forward ~45°, flat back, dumbbells hanging below shoulders', 'Slight bend in elbows, raise arms out to the sides in a wide arc', 'Squeeze shoulder blades together at the top', 'Lower under control, avoid using momentum'] },
   ],
@@ -74,10 +78,10 @@ const WORKOUTS = {
       cues: ['Bar over mid-foot, shins close, grip just outside legs', 'Flat back, chest up, hips low enough to load the legs', 'Drive through the floor, bar stays close to shins/thighs', 'Stand tall with hips through, avoid hyperextending at top'] },
     { name: 'Pike Push-Up', equip: 'Bodyweight (+ bench for progression)', region: 'Upper', muscle: 'Chest (upper) / Shoulders (front)', reps: 'To near-failure', targets: ['chest', 'shoulders'],
       cues: ['Start in a downward-dog position, hands shoulder-width, hips high', 'Bend elbows to lower the top of your head toward the floor', 'Keep hips high — a steeper hip angle shifts work to the shoulders', 'Press back up; elevate feet on the bench later to progress'] },
-    { name: 'Front-Foot-Elevated Split Squat', equip: 'Straight bar + small plate', region: 'Lower', muscle: 'Quads / Glutes', reps: '10–12/side', targets: ['quads', 'glutes'],
-      cues: ['Front foot slightly elevated (or standard lunge stance), bar on back', 'Lower straight down, back knee toward the floor', 'Front knee tracks over toes, torso stays upright', 'Push through the front heel to return to start'] },
     { name: 'Single-Arm DB Row', equip: 'Dumbbell + bench', region: 'Upper', muscle: 'Back / Lats', reps: '12–15/side', targets: ['back', 'biceps'],
       cues: ['One knee and hand on bench, flat back, other foot on floor', 'Dumbbell hangs straight down, pull to hip, elbow drives back', 'Squeeze at the top, lower under full control', 'Avoid rotating the torso to cheat the weight up'] },
+    { name: 'Front-Foot-Elevated Split Squat', equip: 'Straight bar + small plate', region: 'Lower', muscle: 'Quads / Glutes', reps: '10–12/side', targets: ['quads', 'glutes'],
+      cues: ['Front foot slightly elevated (or standard lunge stance), bar on back', 'Lower straight down, back knee toward the floor', 'Front knee tracks over toes, torso stays upright', 'Push through the front heel to return to start'] },
     { name: 'Bench Dips', equip: 'Bodyweight + bench', region: 'Upper', muscle: 'Triceps / Chest (lower)', reps: 'To near-failure', targets: ['triceps', 'chest'],
       cues: ['Hands on bench edge, fingers forward, feet out on the floor', 'Lower body by bending elbows to ~90°, elbows point back', 'Keep hips close to the bench, shoulders shouldn\u2019t roll forward', 'Press through the palms to return to start'] },
     { name: 'Barbell Hip Thrust', equip: 'Straight bar + plates + bench', region: 'Lower', muscle: 'Glutes (max) / Hamstrings', reps: '12–15', targets: ['glutes', 'hamstrings'],
@@ -86,16 +90,20 @@ const WORKOUTS = {
       cues: ['Stand tall, bar at arm\u2019s length in front of thighs', 'Shrug shoulders straight up toward your ears — no rolling motion', 'Pause briefly at the top and squeeze', 'Lower under control; let the grip work rather than using the arms to lift'] },
     { name: 'Wide-Grip EZ Bar Curl', equip: 'EZ bar + plates (outer grips)', region: 'Upper', muscle: 'Biceps (short head)', reps: '12–15', targets: ['biceps'],
       cues: ['Grip the wide outer bends of the same EZ bar', 'Elbows tucked to sides, curl up under control', 'Squeeze at the top, focusing on the inner/short head', 'Lower slowly — same bar as your other curl, just the outer grips'] },
-    { name: 'Standing Calf Raise', equip: 'Dumbbells (or bar on back)', region: 'Lower', muscle: 'Calves', reps: '15–20', targets: ['calves'],
-      cues: ['Stand tall, weight at sides or on back, feet hip-width', 'Rise onto toes as high as possible, pause briefly', 'Lower slowly past the start position for a full stretch', 'Keep knees soft, not locked out'] },
-    { name: 'DB Standing Shoulder Press', equip: 'Dumbbells', region: 'Upper', muscle: 'Shoulders (front/side)', reps: '10–12', targets: ['shoulders'],
-      cues: ['Stand tall, dumbbells at shoulder height, palms facing forward', 'Brace core, avoid leaning back excessively as you press', 'Press dumbbells straight overhead until arms extend', 'Lower under control back to shoulder height'] },
-    { name: 'Bent-Over Wide-Grip DB Row', equip: 'Dumbbells', region: 'Upper', muscle: 'Rear delts / Upper back', reps: '12–15', targets: ['rearDelts', 'back'],
-      cues: ['Hinge forward ~45°, flat back, dumbbells hanging below shoulders', 'Pull elbows out wide and up toward shoulder height, like drawing a bow', 'Squeeze shoulder blades together at the top', 'Lower under control, avoid using momentum'] },
-    { name: 'Barbell Good Morning (light load)', equip: 'Straight bar + light plates', region: 'Lower', muscle: 'Hamstrings / Lower back', reps: '12–15', targets: ['hamstrings', 'lowerBack'],
-      cues: ['Bar on upper back like a squat, feet hip-width, soft knees', 'Hinge at the hips, pushing them back, flat back throughout', 'Lower torso until you feel a hamstring stretch', 'Drive hips forward to return upright — keep this one light'] },
+    { name: 'Seated Calf Raise', equip: 'Straight bar across thighs + bench', region: 'Lower', muscle: 'Calves (soleus)', reps: '15–20', targets: ['calves'],
+      cues: ['Sit on the bench, feet flat, knees bent at ~90°, bar padded across the thighs just above the knees', 'Rise onto your toes as high as possible, pause briefly', 'Lower slowly for a full stretch', 'The bent knee shifts work to the soleus — use the bar, DBs are too light'] },
     { name: 'Bent-Over DB Reverse Fly', equip: 'Dumbbells', region: 'Upper', muscle: 'Rear delts / Upper back', reps: '12–15', targets: ['rearDelts', 'back'],
       cues: ['Hinge forward ~45°, flat back, dumbbells hanging below shoulders', 'Slight bend in elbows, raise arms out to the sides in a wide arc', 'Squeeze shoulder blades together at the top', 'Lower under control, avoid using momentum'] },
+    { name: 'Towel-Slider Hamstring Curl', equip: 'Towel + smooth floor (bodyweight)', region: 'Lower', muscle: 'Hamstrings (knee-flexion)', reps: '10–12', targets: ['hamstrings'],
+      cues: ['Lie on your back, heels on a towel on a smooth floor, knees bent, hips lifted', 'Keep hips up and straight, slide heels away until legs are nearly straight', 'Pull heels back in by bending the knees, squeezing the back of the thighs', 'If it is too hard, slide out less far; breathe out as you pull in'] },
+    { name: 'DB Standing Shoulder Press', equip: 'Dumbbells', region: 'Upper', muscle: 'Shoulders (front/side)', reps: '10–12', targets: ['shoulders'],
+      cues: ['Stand tall, dumbbells at shoulder height, palms facing forward', 'Brace core, avoid leaning back excessively as you press', 'Press dumbbells straight overhead until arms extend', 'Lower under control back to shoulder height'] },
+    { name: 'Side-Lying Hip Abduction', equip: 'Bodyweight', region: 'Lower', muscle: 'Glutes (medius)', reps: '15/side', targets: ['glutes'],
+      cues: ['Lie on your side, legs straight, body in one line', 'Lift the top leg up and slightly back, toes pointing forward or slightly down', 'Pause at the top, lower slowly without rolling the hips back', 'Keep the movement small and controlled'] },
+    { name: 'EZ Bar Overhead Triceps Extension', equip: 'EZ bar + light plates', region: 'Upper', muscle: 'Triceps (long head)', reps: '12–15', targets: ['triceps'],
+      cues: ['Stand or sit tall, hold the EZ bar overhead with a narrow grip, elbows pointing forward', 'Lower the bar behind your head by bending only the elbows', 'Keep elbows close and core braced, do not arch the lower back', 'Extend back up to full reach — go light, this stretches the long head hard'] },
+    { name: 'Prone Y-Raise', equip: 'Bench + very light dumbbells (or bodyweight)', region: 'Upper', muscle: 'Lower traps / Rotator cuff', reps: '12–15', targets: ['traps', 'rearDelts'],
+      cues: ['Lie chest-down on the bench (or incline), arms hanging, thumbs pointing up', 'Raise arms in a Y shape above the head, leading with the thumbs', 'Squeeze the lower shoulder blades down and together', 'Use 0–5 kg only — this is a small muscle, form beats load'] },
   ],
 };
 
@@ -290,7 +298,7 @@ export default function PHATracker() {
   const [notifyPrefs, setNotifyPrefs] = useState(NOTIFY_DEFAULTS);
   const [workoutView, setWorkoutView] = useState('train'); // train | history
   const [day, setDay] = useState('A');
-  const [roundsTarget, setRoundsTarget] = useState(3);
+  const [roundsTarget, setRoundsTarget] = useState(1);
   const [phase, setPhase] = useState('setup'); // setup | active | rest | finisher | done
   const [currentRound, setCurrentRound] = useState(1);
   const [stationIdx, setStationIdx] = useState(0);
@@ -404,7 +412,8 @@ export default function PHATracker() {
       if (loadedProfile) setProfile(loadedProfile);
       if (loadedSettings) {
         if (loadedSettings.day) setDay(loadedSettings.day);
-        if (loadedSettings.rounds) setRoundsTarget(loadedSettings.rounds);
+        // Rounds are no longer restored from old settings: the cardiologist's
+        // 30–40 min limit means one round, so every launch starts at 1.
       }
       setLoading(false);
     })();
@@ -1530,6 +1539,8 @@ const BODYWEIGHT_LOAD = {
   'Lateral Lunge': 0.55,
   'Bulgarian Split Squat': 0.60,
   'Front-Foot-Elevated Split Squat': 0.60,
+  'Towel-Slider Hamstring Curl': 0.40,
+  'Side-Lying Hip Abduction': 0.15,
 };
 
 function normaliseExerciseName(n) {
@@ -3274,7 +3285,7 @@ function SetupScreen({ day, setDay, roundsTarget, setRoundsTarget, onStart, last
             <Plus size={16} />
           </button>
         </div>
-        <div className="text-[11px] mt-2 text-center" style={{ color: COLORS.textMute }}>Start at 3 rounds, build toward 4 as it gets easier</div>
+        <div className="text-[11px] mt-2 text-center" style={{ color: COLORS.textMute }}>One round only — your cardiologist advised 30–40 min per session</div>
       </div>
 
       {lastSession && (

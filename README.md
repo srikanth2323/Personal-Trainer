@@ -119,13 +119,20 @@ Two lines in `index.html` control the overall feel:
 
 ## Known issue: Workout B's barbell load order
 
-Workout B's exercises no longer run strictly heaviest-to-lightest bar load: Barbell Shrugs has been progressed to 40kg, heavier than the Deadlift and Hip Thrust before it, so plates need to go back on mid-session rather than only coming off. This wasn't touched by the 13-station rebuild — it drifted because different exercises progress at different rates — and hasn't been fixed pending a decision on reordering B.
+Workout B's exercises no longer run strictly heaviest-to-lightest bar load: Barbell Shrugs has been progressed to 40kg, heavier than the Deadlift and Hip Thrust before it, so plates need to go back on mid-session rather than only coming off. Moving it earlier would pre-fatigue the grip before the deadlift, so it is left as is — one plate change is needed mid-session.
 
 ## Regional muscle detail
 
 Exercise cards show regional bias alongside the muscle group where it's established and actionable — "Chest (mid)" for flat bench vs "Chest (upper)" for feet-elevated push-ups vs "Chest (lower)" for hands-elevated push-ups, "Biceps (long head)" vs "Biceps (short head)" for the two EZ bar grips, "Glutes (max)" for hip thrust vs "Glutes (medius)" for lateral lunge. This is deliberately limited to regions with real, well-established bias and an exercise in the plan that can actually train that region differently — quads/hamstrings/calves don't get subdivided since the plan has no exercises that bias their sub-regions differently. The aggregate views (heat map, load balance) stay at the group level; regional detail only shows on individual exercise cards, so the analysis views don't fragment into noise.
 
-Both workouts grew to 13 stations each to close two gaps: no lower-chest-biased press anywhere in the plan (added Push-Ups, hands elevated — Workout A) and no dedicated short-head-biased curl (added Wide-Grip EZ Bar Curl, using the same bar's outer grips — Workout B, which previously had no isolated biceps exercise at all). Each addition landed in the workout that specifically lacked it, rather than stacking both into one day. Both new exercises were inserted into the existing alternation-and-descending-load order rather than appended — in Workout A, Standing Calf Raise sits between the two push-up variants so a near-identical chest movement doesn't repeat back-to-back on pre-fatigued muscle.
+## One round, 15 stations each (30–40 min)
+
+On the cardiologist's advice the circuit is now **one round** per session (the app starts at 1 round every launch; old saved round counts are ignored). Both workouts were then audited head by head and grew from 13 to 15 stations to close real gaps:
+
+- **Workout A** added a Towel-Slider Hamstring Curl (knee-flexion — every other hamstring move was a hip hinge) and a Reverse EZ Bar Curl (brachialis, brachioradialis, forearm extensors).
+- **Workout B** swapped Standing Calf Raise → Seated Calf Raise (soleus), Barbell Good Morning → Towel-Slider Hamstring Curl, and Bent-Over Wide-Grip DB Row → Prone Y-Raise (lower traps, a near-duplicate of the reverse fly before), and added Side-Lying Hip Abduction (glute medius) and EZ Bar Overhead Triceps Extension (triceps long head).
+
+Deliberately not given their own station: rotator cuff, tibialis anterior, glute minimus, rectus femoris, and any vertical pull (no usable pull-up bar in the gym room). Dumbbells top out at 10 kg, so DB stations progress by tempo and reps; the seated calf raise uses the barbell. Estimated time is about 32–34 minutes per session including warm-up and core; your first one-round Samsung Health log will confirm it.
 
 ## Muscle-level analysis (Fitness → Workout → Trends)
 
